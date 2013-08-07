@@ -16,8 +16,6 @@
  */
 
 namespace SSql\Sql\Node;
-
-use SSql\Sql\Node\AbstractNode;
 use SSql\Sql\Node\SqlConnectorAdjustable;
 use SSql\Sql\Context\CommandContext;
 

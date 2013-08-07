@@ -11,13 +11,13 @@ In the real business scene and business applications, sometimes we need access d
 When executing a sql with ORM, generally we don't know whether the sql is grammertically corrent or not
 until executing in web application.
 
-#動機
-実際の業務では、時々ORMが持っている標準機能以上のDBへのアクセス処理を実装する必要があります。
-ORMの機能でSQLを発行する場合、大抵それらのSQLは実際にWebアプリケーションで実行されるまで文法的に正しいかはわかりません。
-
 The dbflute has solved such matter with outside sql, however the dbflute is implemented in Java.
 SSql is reimplemented in PHP.
 
+
+#動機
+実際の業務では、時々ORMが持っている標準機能以上のDBへのアクセス処理を実装する必要があります。
+ORMの機能でSQLを発行する場合、大抵それらのSQLは実際にWebアプリケーションで実行されるまで文法的に正しいかはわかりません。
 dbfluteはそのような問題を外出しSQLで解決しています。ただdbfluteはJavaで実装されており、SSqlをphpで再実装しました。
 
 

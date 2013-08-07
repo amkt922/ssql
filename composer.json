@@ -1,6 +1,6 @@
 {
-    "name": "amkt/sql-executor",
-    "description": "the library that execute sql.",
+    "name": "amkt/ssql",
+    "description": "the library execute sql simply.",
     "authors": [
         {
             "name": "amkt",
@@ -12,7 +12,7 @@
     },
 	"autoload": {
 		"psr-0": {
-			"sqlExecutor": "src/"
+			"ssql": "src/"
 		}
 	}
 }
