@@ -35,7 +35,7 @@ class SSqlTest extends \PHPUnit_Framework_TestCase {
 	 * @todo   Implement testFrom().
 	 */
 	public function test1() {
-		$users = SSql::getExecutor(array('database' => array('dsn' => 'sqlite:./db/testdb.sqlite3'), 'sqlDir' => './sql/'))
+		$users = SSql::getSSql(array('database' => array('dsn' => 'sqlite:./db/testdb.sqlite3'), 'sqlDir' => './sql/'))
 			->selectList('selectUser', array());		
 		$this->assertSame(count($users), 3);
 	}
@@ -45,13 +45,13 @@ class SSqlTest extends \PHPUnit_Framework_TestCase {
 	 * @todo   Implement testFrom().
 	 */
 	public function test2() {
-		$users = SSql::getExecutor(array('database' => array('dsn' => 'sqlite:./db/testdb.sqlite3'), 'sqlDir' => './sql/'))
+		$users = SSql::getSSql(array('database' => array('dsn' => 'sqlite:./db/testdb.sqlite3'), 'sqlDir' => './sql/'))
 			->selectList('selectUser', array('id' => 3));		
 		$this->assertSame($users[0]['name'], 'takahashi');
 	}
 
 	public function test3() {
-		$users = SSql::getExecutor(array('database' => array('dsn' => 'sqlite:./db/testdb.sqlite3'), 'sqlDir' => './sql/'))
+		$users = SSql::getSSql(array('database' => array('dsn' => 'sqlite:./db/testdb.sqlite3'), 'sqlDir' => './sql/'))
 			->selectList('selectUser', array('id' => 2), get_class(new User()));		
 		$this->assertSame($users[0]->id, 2);
 		$this->assertSame($users[0]->name, 'suzuki');
