@@ -79,6 +79,23 @@ SQL;
 		$this->assertSame($users[0]->getName(), 'suzuki');
 	}
 
+	public function test4() {
+		$users = SSql::getSSql($this->config)
+			->selectList('selectUserSort'
+							, array('paging' => true, 'idOrder' => 'desc')
+							, get_class(new User()));		
+		$this->assertSame($users[0]->getId(), '5');
+		$this->assertSame($users[0]->getName(), 'ito');
+	}
+
+	public function test5() {
+		$count = SSql::getSSql($this->config)
+					->selectEntity('selectUserSort'
+							, array('paging' => false));		
+		$this->assertSame($count['count(id)'], '5');
+	}
+
+
 }
 
 class User {

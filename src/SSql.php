@@ -114,9 +114,9 @@ class SSql {
 	}
 
 	public function selectEntity($sql, $params, $entityName = null) {
-		$sql = $this->setupSql($sql, $params);
-		$stmt = $this->pdo->query($sql);
-		$result = null;
+		$context = $this->getCommandContext($sql, $params);
+		$stmt = $this->prepareAndBindVariable($context);
+		$stmt->execute();
 		if (!is_null($entityName)) {
 			$result = $stmt->fetchAll(\PDO::FETCH_CLASS, $entityName);
 		} else {
