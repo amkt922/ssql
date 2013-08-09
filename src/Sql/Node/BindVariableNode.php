@@ -18,6 +18,7 @@
 namespace SSql\Sql\Node;
 
 use SSql\Sql\Node\VariableNode;
+use SSql\Exception\BindVariableNotFoundValueException;
 
 /**
  * @author reimplement in PHP and modified by amkt (originated in dbflute) 
@@ -25,11 +26,14 @@ use SSql\Sql\Node\VariableNode;
 class BindVariableNode extends VariableNode {
     
 	public function doAcceptContext($context) {
+		$value = $context->getArg($this->expression);
+		if (is_null($value)) {
+			throw new BindVariableNotFoundValueException;
+			
+		}
 		if (mb_strpos($this->testValue, '\'') === 0) {
-			$value = $context->getArg($this->expression);
 			$context->addSql('?', $value, 'string');
 		} else {
-			$value = $context->getArg($this->expression);
 			if (is_array($value)) {
 				$questionValues = array_fill(0, count($value), '?');
 				$inClause = implode(',', $questionValues);

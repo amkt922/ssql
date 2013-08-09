@@ -22,6 +22,7 @@ use SSql\Sql\SqlTokenizer;
 use SSql\Sql\Node\RootNode;
 use SSql\Sql\Node\IfNode;
 use SSql\Sql\Node\ElseNode;
+use SSql\Exception\EndCommentNotFoundException;
 
 /**
  * @author reimplement in PHP and modified by amkt (originated in dbflute) 
@@ -177,6 +178,9 @@ class SqlAnalyzer {
 	protected function parseIf() {
         $comment = $this->tokenizer->getToken();
         $condition = trim(mb_substr($comment, mb_strlen(Node\IfNode::PREFIX)));
+		if (empty($condition)) {
+			throw new \SSql\Exception\IfCommentConditionEmptyException();
+		}
         $ifNode = new Node\IfNode($condition, $this->sql);
         $this->peekNodeStack()->addChild($ifNode);
         array_push($this->nodeStack, $ifNode);
@@ -209,6 +213,7 @@ class SqlAnalyzer {
             }
             $this->parseToken();
         }
+		throw new EndCommentNotFoundException();
 	}
 
 	private function peekNodeStack() {

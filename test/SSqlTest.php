@@ -95,7 +95,6 @@ SQL;
 		$this->assertSame($count['count(id)'], '5');
 	}
 
-
 }
 
 class User {
