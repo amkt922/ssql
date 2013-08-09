@@ -89,6 +89,7 @@ class SSql {
 	private function setupPDO() {
         if (is_null($this->pdo)) {
             $this->pdo = new \PDO($this->dsn, $this->user, $this->password);
+			$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         }
     }
 

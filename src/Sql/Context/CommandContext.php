@@ -72,11 +72,23 @@ class CommandContext {
 	}
 
 	public function addBindVariables($bindVariables) {
-		array_push($this->bindVariables, $bindVariables);
+		if (is_array($bindVariables)) {
+			foreach ($bindVariables as $variable) {
+				array_push($this->bindVariables, $variable);
+			}
+		} else {
+			array_push($this->bindVariables, $bindVariables);
+		}
 	}
 
 	public function addBindVariableTypes($bindVariableType) {
-		array_push($this->bindVariableTypes, $bindVariableType);
+		if (is_array($bindVariableType)) {
+			foreach ($bindVariableType as $variableType) {
+				array_push($this->bindVariableTypes, $variableType);
+			}
+		} else {
+			array_push($this->bindVariableTypes, $bindVariableType);
+		}
 	}
 
 	public function getBindVariables() {
@@ -88,7 +100,7 @@ class CommandContext {
 	}
 
 	public function getSql() {
-		return $this->sql;
+		return trim($this->sql);
 	}
 
 	private function asBeginChild() {
