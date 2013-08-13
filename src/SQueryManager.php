@@ -40,6 +40,27 @@ class SQueryManager {
 		return $this;
 	}
 
+	public function delete() {
+		array_push($this->sqlStack, 'DELETE');
+		return $this;
+	}
+
+	public function select($columns) {
+		array_push($this->sqlStack, 'SELECT');
+		if (is_array($columns)) {
+			array_push($this->sqlStack, implode(',', $columns));
+		} else {
+			array_push($this->sqlStack, $columns);
+		}
+		return $this;
+	}
+
+	public function from($table) {
+		array_push($this->sqlStack, 'FROM');
+		array_push($this->sqlStack, $table);
+		return $this;
+	}
+
    	public function into($table, $columns = array()) {
 		array_push($this->sqlStack, $table);
 		array_push($this->sqlStack, '(' . implode(',', $columns) . ')');
@@ -102,7 +123,12 @@ class SQueryManager {
 	public function execute() {
 		$sql = implode(' ', $this->sqlStack);
 		$stmt = $this->pdo->prepare($sql);
-		return $stmt->execute($this->inputParameters);
+		if (mb_strpos($sql, 'SELECT') === 0) {
+			$stmt->execute($this->inputParameters);
+			return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		} else {
+			return $stmt->execute($this->inputParameters);
+		}
 	}
 }
 

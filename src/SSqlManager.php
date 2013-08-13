@@ -3,6 +3,7 @@
 namespace SSql;
 
 use SSql\Sql\Context\CommandContext;
+use SSql\Sql\SqlAnalyzer;
 
 /*
  * To change this template, choose Tools | Templates
@@ -38,7 +39,7 @@ class SSqlManager {
     
 	private function getCommandContext($sql, $params) {
 		$rowSql = file_get_contents($this->sqlDir . $sql . '.sql');
-		$analyzer = new \SSql\Sql\SqlAnalyzer($rowSql);
+		$analyzer = new SqlAnalyzer($rowSql);
 		$node = $analyzer->analyze();
 		$context = CommandContext::createCommandContext($params);
 		$node->acceptContext($context);

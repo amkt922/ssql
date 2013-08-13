@@ -97,12 +97,21 @@ SQL;
 
 	public function test6() {
 		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()->select('*')->from('user')->execute();
+		$this->assertSame($users[0]['id'], '1');
+		$this->assertSame($users[0]['name'], 'sato');
+	}
+
+
+	public function test7() {
+		$ssql = SSql::connect($this->config);
 		$count = $ssql->createSQry()->update('User')->set(array('name' => 'kato'))
 					->where(array('id' => 1))->execute();
 		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 1), get_class(new User()));		
 		$this->assertSame($users[0]->getId(), '1');
 		$this->assertSame($users[0]->getName(), 'kato');
 	}
+
 
 }
 
