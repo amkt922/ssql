@@ -57,8 +57,8 @@ SQL;
 	 * @todo   Implement testFrom().
 	 */
 	public function test1() {
-		$users = SSql::getSSql($this->config)
-			->selectList('selectUser', array());		
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSSql()->selectList('selectUser', array());		
 		$this->assertSame(count($users), 5);
 	}
 
@@ -67,21 +67,21 @@ SQL;
 	 * @todo   Implement testFrom().
 	 */
 	public function test2() {
-		$users = SSql::getSSql($this->config)
-			->selectList('selectUser', array('id' => 3));		
-		$this->assertSame($users[0]['name'], 'takahashi');
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 1));		
+		$this->assertSame($users[0]['name'], 'sato');
 	}
 
 	public function test3() {
-		$users = SSql::getSSql($this->config)
-			->selectList('selectUser', array('id' => 2), get_class(new User()));		
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 2), get_class(new User()));		
 		$this->assertSame($users[0]->getId(), '2');
 		$this->assertSame($users[0]->getName(), 'suzuki');
 	}
 
 	public function test4() {
-		$users = SSql::getSSql($this->config)
-			->selectList('selectUserSort'
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSSql()->selectList('selectUserSort'
 							, array('paging' => true, 'idOrder' => 'desc')
 							, get_class(new User()));		
 		$this->assertSame($users[0]->getId(), '5');
@@ -89,10 +89,19 @@ SQL;
 	}
 
 	public function test5() {
-		$count = SSql::getSSql($this->config)
-					->selectEntity('selectUserSort'
+		$ssql = SSql::connect($this->config);
+		$count = $ssql->createSSql()->selectEntity('selectUserSort'
 							, array('paging' => false));		
 		$this->assertSame($count['count(id)'], '5');
+	}
+
+	public function test6() {
+		$ssql = SSql::connect($this->config);
+		$count = $ssql->createSQry()->update('User')->set(array('name' => 'kato'))
+					->where(array('id' => 1))->execute();
+		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 1), get_class(new User()));		
+		$this->assertSame($users[0]->getId(), '1');
+		$this->assertSame($users[0]->getName(), 'kato');
 	}
 
 }

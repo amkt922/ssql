@@ -4,8 +4,8 @@ namespace SSql;
 
 require_once "autoload.php";
 
-
-use SSql\Sql\Context\CommandContext;
+use SSql\SSqlManager;
+use SSql\SQueryManager;
 
 /*
  * To change this template, choose Tools | Templates
@@ -18,6 +18,7 @@ use SSql\Sql\Context\CommandContext;
  * @author amkt
  */
 class SSql {
+
     private $pdo = null;
     
     private $dsn = '';
@@ -28,31 +29,39 @@ class SSql {
 
 	private $sqlDir = '';
 
-    /**
-     * @var SSql instance of myself 
-     */
-    private static $instance = null;
-   
+	private static $instance = null;
+  
     /**
      * constructor
      */
-    private function __construct() {}
+	private function __construct() {}
+
+    public function connect($config) {
+		if (is_null(self::$instance)) {
+			self::$instance = new self;
+			if (is_array($config)) {
+				self::$instance->setConfigFromArray($config);
+				self::$instance->setupPDO();
+			} else {
+				throw new \RuntimeException('config should be an array');
+			}
+		}
+		return self::$instance;
+	}
     
     /**
      * create instance of myself and load config file.
      * 
      * @param array|string  $config  config file for accessing database.
      */
-    public static function getSSql($config) {
-        if (is_null(self::$instance)) {
-            self::$instance = new self;
-			if (is_array($config)) {
-				self::$instance->setConfigFromArray($config);
-			}   
-        }
-        
-        return self::$instance;
+    public function createSSql() {
+        return new SSqlManager($this->pdo, $this->sqlDir);
     }
+
+    public function createSQry() {
+        return new SQueryManager($this->pdo);
+    }
+
 
     private function setConfigFromArray($config) {        
         if (!in_array('database', $config) 
@@ -76,16 +85,6 @@ class SSql {
 		}
     }
 
-	private function getCommandContext($sql, $params) {
-		$this->setupPDO();
-		$rowSql = file_get_contents($this->sqlDir . $sql . '.sql');
-		$analyzer = new \SSql\Sql\SqlAnalyzer($rowSql);
-		$node = $analyzer->analyze();
-		$context = CommandContext::createCommandContext($params);
-		$node->acceptContext($context);
-		return $context;
-	}
-
 	private function setupPDO() {
         if (is_null($this->pdo)) {
             $this->pdo = new \PDO($this->dsn, $this->user, $this->password);
@@ -93,44 +92,16 @@ class SSql {
         }
     }
 
-	private function prepareAndBindVariable($context) {
-		$stmt = $this->pdo->prepare($context->getSql());
-		$bindVariables = $context->getBindVariables();
-		foreach ($bindVariables as $index => $value) {
-			$stmt->bindValue($index + 1, $value);
-		}
-		return $stmt;
+	public function beginTransaction() {
+		return $this->pdo->beginTransaction();
 	}
 
-	public function selectList($sql, $params, $entityName = null) {
-		$context = $this->getCommandContext($sql, $params);
-		$stmt = $this->prepareAndBindVariable($context);
-		$stmt->execute();
-		if (!is_null($entityName)) {
-			return $stmt->fetchAll(\PDO::FETCH_CLASS, $entityName);
-		} else {
-			return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-		}
+	public function commit() {
+		return $this->pdo->commit();
 	}
 
-	public function selectEntity($sql, $params, $entityName = null) {
-		$context = $this->getCommandContext($sql, $params);
-		$stmt = $this->prepareAndBindVariable($context);
-		$stmt->execute();
-		if (!is_null($entityName)) {
-			$result = $stmt->fetchAll(\PDO::FETCH_CLASS, $entityName);
-		} else {
-			$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-		}
-		if(!empty($result)) {
-			return $result[0];
-		}
-		return null;
-	}
-
-	public function execute($sql, $params) {
-		$sql = $this->setupSql($sql, $params);
-		return $this->pdo->exec($sql);
+	public function rollback() {
+		return $this->pdo->rollback();
 	}
 }
 

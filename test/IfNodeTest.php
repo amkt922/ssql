@@ -56,7 +56,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
     public function test4() {
@@ -67,7 +67,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
    public function test5() {
@@ -78,7 +78,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
    public function test6() {
@@ -111,7 +111,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
    public function test9() {
@@ -122,7 +122,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
    public function test10() {
@@ -155,7 +155,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
    public function test13() {
@@ -177,7 +177,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
    public function test15() {
@@ -188,7 +188,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
    public function test16() {
@@ -221,7 +221,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
    public function test19() {
@@ -232,7 +232,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
    public function test20() {
@@ -265,11 +265,11 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
    public function test23() {
-		$sql = "/*IF a.isPaging('hoge')*/b = /*@b*/100/*END*/";
+		$sql = "/*IF a.isPaging('hoge')*/b = /*@a.b*/100/*END*/";
 		$an = new SqlAnalyzer($sql);
 		$node = $an->analyze();
 		$param = new Pmb();
@@ -287,7 +287,7 @@ class IfNodeTest extends \PHPUnit_Framework_TestCase {
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame(null, $testSql);	
+		$this->assertSame('', $testSql);	
    }
 
 }
