@@ -1,12 +1,22 @@
 <?php
-
-namespace SSql;
-
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+  Copyright 2013, amkt <amkt922@gmail.com>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
  */
 
+
+namespace SSql;
 /**
  * Description of SSql
  *
@@ -55,6 +65,28 @@ class SQueryManager {
 		return $this;
 	}
 
+	public function distinct() {
+		array_push($this->sqlStack, 'DISTINCT');
+		return $this;
+	}
+
+	public function innerJoin($table, $conditions) {
+		array_push($this->sqlStack, 'INNER JOIN');
+		array_push($this->sqlStack, $table);
+		array_push($this->sqlStack, 'ON');
+		$this->where($conditions, false);
+		return $this;
+	}
+
+	public function leftJoin($table, $conditions) {
+		array_push($this->sqlStack, 'LEFT OUTER JOIN');
+		array_push($this->sqlStack, $table);
+		array_push($this->sqlStack, 'ON');
+		$this->where($conditions, false);
+		return $this;
+	}
+
+
 	public function from($table) {
 		array_push($this->sqlStack, 'FROM');
 		array_push($this->sqlStack, $table);
@@ -96,8 +128,10 @@ class SQueryManager {
 		return $this;
 	}
 
-	public function where($conditions) {
-		array_push($this->sqlStack, 'WHERE');
+	public function where($conditions, $whereClause = true) {
+		if ($whereClause) {
+			array_push($this->sqlStack, 'WHERE');
+		}
 		$sql = array();
 		foreach ($conditions as $column => $value) {
 			array_push($sql, "$column = ?");
@@ -107,15 +141,56 @@ class SQueryManager {
 		return $this;
 	}
 
-	public function orClause($conditions) {
+	public function orWhere($conditions) {
 		array_push($this->sqlStack, 'OR');
-		$this->where($conditions);
+		$this->where($conditions, false);
 		return $this;
 	}
 
-	public function andClause($conditions) {
+	public function andWhere($conditions) {
 		array_push($this->sqlStack, 'AND');
-		$this->where($conditions);
+		$this->where($conditions, false);
+		return $this;
+	}
+
+	public function having($conditions, $havingClause = true) {
+		if ($havingClause) {
+			array_push($this->sqlStack, 'HAVING');
+		}
+		$sql = array();
+		foreach ($conditions as $column => $value) {
+			array_push($sql, "$column = ?");
+			array_push($this->inputParameters, $value);
+		}
+		array_push($this->sqlStack, '(' . implode(' AND ', $sql) . ')');
+		return $this;
+	}
+
+	public function orHaving($conditions) {
+		array_push($this->sqlStack, 'OR');
+		$this->having($conditions, false);
+		return $this;
+	}
+
+	public function andHaving($conditions) {
+		array_push($this->sqlStack, 'AND');
+		$this->having($conditions, false);
+		return $this;
+	}
+
+	public function orderBy($clauses) {
+		array_push($this->sqlStack, 'ORDER BY');
+		$orders = array();
+		foreach ($clauses as $clause => $order) {
+			array_push($orders, "{$clause} {$order}");
+		}
+		array_push($this->sqlStack, implode(',', $orders));
+		return $this;
+	}
+
+	public function groupBy($clauses) {
+		array_push($this->sqlStack, 'GROUP BY');
+		array_push($this->sqlStack, implode(',', $clauses));
 		return $this;
 	}
 
