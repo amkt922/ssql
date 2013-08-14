@@ -41,7 +41,7 @@ class SQueryManager {
     /**
      * constructor
      */
-    public function __construct(\PDO $pdo) {
+    public function __construct(\PDO $pdo = null) {
 		$this->pdo = $pdo;
 	}
 
@@ -65,8 +65,13 @@ class SQueryManager {
 		return $this;
 	}
 
-	public function distinct() {
-		array_push($this->sqlStack, 'DISTINCT');
+	public function selectDistinct($columns) {
+		array_push($this->sqlStack, 'SELECT DISTINCT');
+		if (is_array($columns)) {
+			array_push($this->sqlStack, implode(',', $columns));
+		} else {
+			array_push($this->sqlStack, $columns);
+		}
 		return $this;
 	}
 
@@ -74,7 +79,11 @@ class SQueryManager {
 		array_push($this->sqlStack, 'INNER JOIN');
 		array_push($this->sqlStack, $table);
 		array_push($this->sqlStack, 'ON');
-		$this->where($conditions, false);
+		$sql = array();
+		foreach ($conditions as $column => $value) {
+			array_push($sql, "{$column} = {$value}");
+		}
+		array_push($this->sqlStack, implode(' AND ', $sql));
 		return $this;
 	}
 
@@ -82,7 +91,11 @@ class SQueryManager {
 		array_push($this->sqlStack, 'LEFT OUTER JOIN');
 		array_push($this->sqlStack, $table);
 		array_push($this->sqlStack, 'ON');
-		$this->where($conditions, false);
+		$sql = array();
+		foreach ($conditions as $column => $value) {
+			array_push($sql, "{$column} = {$value}");
+		}
+		array_push($this->sqlStack, implode(' AND ', $sql));
 		return $this;
 	}
 
@@ -94,6 +107,7 @@ class SQueryManager {
 	}
 
    	public function into($table, $columns = array()) {
+		array_push($this->sqlStack, 'INTO');
 		array_push($this->sqlStack, $table);
 		array_push($this->sqlStack, '(' . implode(',', $columns) . ')');
 		return $this;
@@ -104,7 +118,7 @@ class SQueryManager {
 		$this->inputParameters = $values;
 		$valuesNum = count($values);
 		$valueNum = count($values[0]);
-		for ($i = 0; i < $valuesNum; $i++) {
+		for ($i = 0; $i < $valuesNum; $i++) {
 			$v = array_fill(0, $valueNum, '?');
 			array_push($this->sqlStack, '(' . implode(',', $v) . ')');
 		}
@@ -193,10 +207,13 @@ class SQueryManager {
 		array_push($this->sqlStack, implode(',', $clauses));
 		return $this;
 	}
-
+	
+	public function getSql() {
+		return implode(' ', $this->sqlStack);
+	}
 
 	public function execute() {
-		$sql = implode(' ', $this->sqlStack);
+		$sql = $this->getSql();
 		$stmt = $this->pdo->prepare($sql);
 		if (mb_strpos($sql, 'SELECT') === 0) {
 			$stmt->execute($this->inputParameters);
