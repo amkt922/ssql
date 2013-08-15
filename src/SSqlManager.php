@@ -21,21 +21,21 @@ use SSql\Sql\Context\CommandContext;
 use SSql\Sql\SqlAnalyzer;
 
 /**
- * Description of SSql
+ * Simple Outside Sql Manager.
  *
- * @author amkt
+ * @author amkt922
  */
 class SSqlManager {
 
 	/**
 	 * PHP Data objects.
-	 * @var type resource
+	 * @var PDO
 	 */
     private $pdo = null;
     
 	/**
 	 * The place to store sql files.
-	 * @var type string
+	 * @var string
 	 */
 	private $sqlDir = '';
   

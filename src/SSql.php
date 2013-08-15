@@ -14,19 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-
-
 namespace SSql;
 
 require_once "autoload.php";
 
+use \PDO;
+use \InvalidArgumentException;
 use SSql\SSqlManager;
 use SSql\SQueryManager;
 
 /**
- * Description of SSql
+ * SSql factory class.
  *
- * @author amkt
+ * @author amkt922
  */
 class SSql {
 
@@ -77,10 +77,10 @@ class SSql {
     private function setConfigFromArray($config) {        
         if (!in_array('database', $config) 
                 && !is_array($config['database'])) {
-            throw new \InvalidArgumentException('The parameter sould include database and it should be an array.');
+            throw new InvalidArgumentException('The parameter sould include database and it should be an array.');
         }
         if (!array_key_exists('dsn', $config['database'])) {
-            throw new \InvalidArgumentException('dsn value should be in database array.');
+            throw new InvalidArgumentException('dsn value should be in database array.');
         }
         $database = $config['database'];
         $this->dsn = $database['dsn'];
@@ -98,8 +98,8 @@ class SSql {
 
 	private function setupPDO() {
         if (is_null($this->pdo)) {
-            $this->pdo = new \PDO($this->dsn, $this->user, $this->password);
-			$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->pdo = new PDO($this->dsn, $this->user, $this->password);
+			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
     }
 

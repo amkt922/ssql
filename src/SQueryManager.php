@@ -15,33 +15,43 @@
    limitations under the License.
  */
 
-
 namespace SSql;
+
+use \PDO;
+use \InvalidArgumentException;
+
 /**
- * Description of SSql
- *
- * @author amkt
+ * Simple Query Manager
+ * <pre>
+ * The class that build sql simply.
+ * </pre>
+ * 
+ * @author amkt922
  */
 class SQueryManager {
 
 	/**
 	 * PHP Data objects.
-	 * @var type resource
+	 * @var PDO
 	 */
     private $pdo = null;
 
 	/**
 	 * the sql that is going to be executed.
-	 * @var type array
+	 * @var array
 	 */
 	private $sqlStack = array();
 
+	/**
+	 * parameter that is passed to prepared statement.
+	 * @var array
+	 */
 	private $inputParameters = array();
     
     /**
      * constructor
      */
-    public function __construct(\PDO $pdo = null) {
+    public function __construct(PDO $pdo = null) {
 		$this->pdo = $pdo;
 	}
 
@@ -55,67 +65,117 @@ class SQueryManager {
 		return $this;
 	}
 
+	/**
+	 * add SELECT statement with columns. If $columns is empty, add '*' for column.
+	 * 
+	 * @param array|string $columns selected columns 
+	 * @return \SSql\SQueryManager
+	 */
 	public function select($columns) {
 		array_push($this->sqlStack, 'SELECT');
-		if (is_array($columns)) {
-			array_push($this->sqlStack, implode(',', $columns));
-		} else {
-			array_push($this->sqlStack, $columns);
-		}
+		$this->addColumns($columns);
 		return $this;
 	}
 
+	/**
+	 * add SELECT DISTINCT sstatement with columns. If $columns is empty, add '*' for column.
+	 * 
+	 * @param array|string $columns selected columns 
+	 * @return \SSql\SQueryManager
+	 */
 	public function selectDistinct($columns) {
 		array_push($this->sqlStack, 'SELECT DISTINCT');
+		$this->addColumns($columns);
+		return $this;
+	}
+
+	private function addColumns($columns) {
+		if (empty($columns)) {
+			$columns = '*';
+		}
 		if (is_array($columns)) {
 			array_push($this->sqlStack, implode(',', $columns));
 		} else {
 			array_push($this->sqlStack, $columns);
 		}
-		return $this;
 	}
 
+	/**
+	 * add INNER JOIN statement with table name and condition for join.
+	 * 
+	 * @param string $table
+	 * @param array $conditions
+	 * @return \SSql\SQueryManager
+	 */
 	public function innerJoin($table, $conditions) {
+		$this->checkJoinFuncParams($table, $conditions);
 		array_push($this->sqlStack, 'INNER JOIN');
-		array_push($this->sqlStack, $table);
-		array_push($this->sqlStack, 'ON');
-		$sql = array();
-		foreach ($conditions as $column => $value) {
-			array_push($sql, "{$column} = {$value}");
-		}
-		array_push($this->sqlStack, implode(' AND ', $sql));
+		$this->addJoinTableNameAndConditions($table, $conditions);
 		return $this;
 	}
 
+	/**
+	 * add LEFT OUTER JOIN statement with table name and condition for join.
+	 * 
+	 * @param string $table
+	 * @param array $conditions
+	 * @return \SSql\SQueryManager
+	 */	
 	public function leftJoin($table, $conditions) {
+		$this->checkJoinFuncParams($table, $conditions);
 		array_push($this->sqlStack, 'LEFT OUTER JOIN');
+		$this->addJoinTableNameAndConditions($table, $conditions);
+		return $this;
+	}
+
+	private function checkJoinFuncParams($table, $conditions) {
+		if (empty($table)) {
+			throw new InvalidArgumentException('1st parameter table should not be emtpy');
+		}
+		if (empty($conditions)) {
+			throw new InvalidArgumentException('2nd parameter condition should not be emtpy');
+		}
+	}
+
+	private function addJoinTableNameAndConditions($table, $conditions) {
 		array_push($this->sqlStack, $table);
 		array_push($this->sqlStack, 'ON');
 		$sql = array();
 		foreach ($conditions as $column => $value) {
-			array_push($sql, "{$column} = {$value}");
+			array_push($sql, "{$column} {$value}");
 		}
 		array_push($this->sqlStack, implode(' AND ', $sql));
-		return $this;
 	}
-
 
 	public function from($table) {
+		$this->checkTableNameParam($table);
 		array_push($this->sqlStack, 'FROM');
 		array_push($this->sqlStack, $table);
 		return $this;
 	}
 
    	public function into($table, $columns = array()) {
+		$this->checkTableNameParam($table);
 		array_push($this->sqlStack, 'INTO');
 		array_push($this->sqlStack, $table);
-		array_push($this->sqlStack, '(' . implode(',', $columns) . ')');
+		if (!empty($columns)) {
+			array_push($this->sqlStack, '(' . implode(',', $columns) . ')');
+		}
 		return $this;
 	}
 
-   	public function values($values = array()) {
+	private function checkTableNameParam($table) {
+		if (empty($table)) {
+			throw new InvalidArgumentException('parameter table name should not be empty.');
+		}
+	}
+
+   	public function values($values) {
+		$this->checkValuesParam($values);
 		array_push($this->sqlStack, 'VALUES');
-		$this->inputParameters = $values;
+		foreach ($values as $v) {
+			$this->inputParameters += $v;
+		}
 		$valuesNum = count($values);
 		$valueNum = count($values[0]);
 		for ($i = 0; $i < $valuesNum; $i++) {
@@ -126,12 +186,14 @@ class SQueryManager {
 	}
 
 	public function update($table) {
+		$this->checkTableNameParam($table);
 		array_push($this->sqlStack, 'UPDATE');
 		array_push($this->sqlStack, $table);
 		return $this;
 	}
 
 	public function set($values) {
+		$this->checkValuesParam($values);
 		array_push($this->sqlStack, 'SET');
 		$setValues = array();
 		foreach ($values as $key => $value) {
@@ -142,38 +204,61 @@ class SQueryManager {
 		return $this;
 	}
 
+	private function checkValuesParam($values) {
+		if (empty($values)) {
+			throw new InvalidArgumentException('parameter values should not be empty.');
+		}
+	}
+
 	public function where($conditions, $whereClause = true) {
+		$this->checkConditionsParam($conditions);
 		if ($whereClause) {
 			array_push($this->sqlStack, 'WHERE');
 		}
 		$sql = array();
 		foreach ($conditions as $column => $value) {
-			array_push($sql, "$column = ?");
-			array_push($this->inputParameters, $value);
+			if (is_array($value)
+					&& (mb_strpos($column, ' IN') !== false)) {
+				$v = array_fill(0, count($value), '?');
+				array_push($sql, "$column (" . implode(',', $v) . ')');
+				$this->inputParameters += $value;
+			} else {
+				array_push($sql, "$column ?");
+				array_push($this->inputParameters, $value);
+			}
 		}
 		array_push($this->sqlStack, '(' . implode(' AND ', $sql) . ')');
 		return $this;
 	}
 
 	public function orWhere($conditions) {
+		$this->checkConditionsParam($conditions);
 		array_push($this->sqlStack, 'OR');
 		$this->where($conditions, false);
 		return $this;
 	}
 
 	public function andWhere($conditions) {
+		$this->checkConditionsParam($conditions);
 		array_push($this->sqlStack, 'AND');
 		$this->where($conditions, false);
 		return $this;
 	}
 
+	private function checkConditionsParam($conditions) {
+		if (empty($conditions)) {
+			throw new InvalidArgumentException('parameter conditions should not empty.');
+				}
+	}
+
 	public function having($conditions, $havingClause = true) {
+		$this->checkConditionsParam($conditions);
 		if ($havingClause) {
 			array_push($this->sqlStack, 'HAVING');
 		}
 		$sql = array();
 		foreach ($conditions as $column => $value) {
-			array_push($sql, "$column = ?");
+			array_push($sql, "$column ?");
 			array_push($this->inputParameters, $value);
 		}
 		array_push($this->sqlStack, '(' . implode(' AND ', $sql) . ')');
@@ -181,18 +266,21 @@ class SQueryManager {
 	}
 
 	public function orHaving($conditions) {
+		$this->checkConditionsParam($conditions);
 		array_push($this->sqlStack, 'OR');
 		$this->having($conditions, false);
 		return $this;
 	}
 
 	public function andHaving($conditions) {
+		$this->checkConditionsParam($conditions);
 		array_push($this->sqlStack, 'AND');
 		$this->having($conditions, false);
 		return $this;
 	}
 
 	public function orderBy($clauses) {
+		$this->checkClausesParam($clauses);
 		array_push($this->sqlStack, 'ORDER BY');
 		$orders = array();
 		foreach ($clauses as $clause => $order) {
@@ -203,21 +291,54 @@ class SQueryManager {
 	}
 
 	public function groupBy($clauses) {
+		$this->checkClausesParam($clauses);
 		array_push($this->sqlStack, 'GROUP BY');
 		array_push($this->sqlStack, implode(',', $clauses));
 		return $this;
 	}
+
+	private function checkClausesParam($clauses) {
+		if (empty($clauses)) {
+			throw new InvalidArgumentException('parameter clauses should not be empty.');
+
+		}
+	}
+
+	public function limit($num) {
+		$this->checkNumParam($num);
+		array_push($this->sqlStack, 'LIMIT');
+		array_push($this->sqlStack, $num);
+		return $this;
+	}
+
+	public function offset($num) {
+		$this->checkNumParam($num);
+		array_push($this->sqlStack, 'OFFSET');
+		array_push($this->sqlStack, $num);
+		return $this;
+	}
+
+	private function checkNumParam($num) {
+		if (empty($num)) {
+			throw new InvalidArgumentException('parameter num should not be empty.');
+		}
+	}
+
 	
 	public function getSql() {
 		return implode(' ', $this->sqlStack);
 	}
 
-	public function execute() {
+	public function execute($entityName = null) {
 		$sql = $this->getSql();
 		$stmt = $this->pdo->prepare($sql);
 		if (mb_strpos($sql, 'SELECT') === 0) {
 			$stmt->execute($this->inputParameters);
-			return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+			if (!is_null($entityName)) {
+				return $stmt->fetchAll(\PDO::FETCH_CLASS, $entityName);
+			} else {
+				return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+			}
 		} else {
 			return $stmt->execute($this->inputParameters);
 		}
