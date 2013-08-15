@@ -105,11 +105,201 @@ SQL;
 
 	public function test7() {
 		$ssql = SSql::connect($this->config);
-		$count = $ssql->createSQry()->update('User')->set(array('name' => 'kato'))
+		$ssql->createSQry()->update('User')->set(array('name' => 'kato'))
 					->where(array('id' => 1))->execute();
 		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 1), get_class(new User()));		
 		$this->assertSame($users[0]->getId(), '1');
 		$this->assertSame($users[0]->getName(), 'kato');
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test8() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->where(array('name' => 'kato'))->execute();
+		$this->assertSame($users[0]['id'], '1');
+		$this->assertSame($users[0]['name'], 'kato');
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test10() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()->selectDistinct(array('id', 'name'))
+						->from('User')
+						->where(array('id' => 2))->execute();
+		$this->assertSame($users[0]['id'], '2');
+		$this->assertSame($users[0]['name'], 'suzuki');
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test11() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->where(array('id' => 3))
+						->andWhere(array('name' => 'takahashi'))->execute();
+		$this->assertSame($users[0]['id'], '3');
+		$this->assertSame($users[0]['name'], 'takahashi');
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test12() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->where(array('id' => 2))
+						->orWhere(array('id' => 3))->execute();
+		$this->assertSame($users[0]['id'], '2');
+		$this->assertSame($users[0]['name'], 'suzuki');
+		$this->assertSame($users[1]['id'], '3');
+		$this->assertSame($users[1]['name'], 'takahashi');
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test13() {
+		/*
+		$sql = $this->object->select(array('id', 'name'))
+						->from('User')
+						->leftJoin('Item', array('User.id' => 'Item.id'))
+						->where(array('name' => 'test', 'id' => 2))
+						->getSql();
+		 */
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test14() {
+		/*
+		$sql = $this->object->select(array('id', 'name'))
+						->from('User')
+						->innerJoin('Item', array('User.id' => 'Item.id'
+													, 'User.name' => 'Item.name'))
+						->where(array('name' => 'test', 'id' => 2))
+						->getSql();
+		 * 
+		 */
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test15() {
+		/*
+		$sql = $this->object->select(array('id', 'name'))
+						->from('User')
+						->leftJoin('Item', array('User.id' => 'Item.id'
+													, 'User.name' => 'Item.name'))
+						->where(array('name' => 'test', 'id' => 2))
+						->getSql();
+		 * 
+		 */
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test16() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->orderBy(array('id' => 'desc'))
+						->execute();
+		$this->assertSame($users[0]['id'], '5');
+		$this->assertSame($users[0]['name'], 'ito');
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test17() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->groupBy(array('id'))
+						->execute();
+		$this->assertSame($users[0]['id'], '1');
+		$this->assertSame($users[0]['name'], 'kato');
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test18() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->groupBy(array('id'))
+						->having(array('id' => 3))
+						->execute();
+		$this->assertSame($users[0]['id'], '3');
+		$this->assertSame($users[0]['name'], 'takahashi');
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test19() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->groupBy(array('id'))
+						->having(array('id' => 1))
+						->andHaving(array('name' => 'kato'))
+						->execute();
+		$this->assertSame($users[0]['id'], '1');
+		$this->assertSame($users[0]['name'], 'kato');
+	}
+
+	/**
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test20() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->groupBy(array('id'))
+						->having(array('id' => 1))
+						->orHaving(array('id' => 2))
+						->execute();
+		$this->assertSame($users[0]['id'], '1');
+		$this->assertSame($users[0]['name'], 'kato');
+		$this->assertSame($users[1]['id'], '2');
+		$this->assertSame($users[1]['name'], 'suzuki');
+	}
+
+
+	public function test9() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSQry()
+					->select(array('id', 'name'))
+					->from('User')
+					->where(array('id' => 1))->execute();
+		$this->assertSame($users[0]['id'], '1');
+		$this->assertSame($users[0]['name'], 'kato');
 	}
 
 

@@ -228,7 +228,7 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	 * @covers SSql\SQueryManager::execute
 	 * @todo   Implement testExecute().
 	 */
-	public function testExecute() {
+public function testExecute() {
 		// Remove the following lines when you implement this test.
 		$this->markTestIncomplete(
 				'This test has not been implemented yet.'
