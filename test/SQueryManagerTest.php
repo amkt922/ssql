@@ -59,8 +59,8 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testDelete() {
 		$sql = $this->object->delete()
 						->from('User')
-						->where(array('name' => 'test', 'id' => 2))->getSql();
-		$this->assertSame('DELETE FROM User WHERE (name = ? AND id = ?)', $sql);
+						->where(array('name like' => 'test', 'id =' => 2))->getSql();
+		$this->assertSame('DELETE FROM User WHERE (name like ? AND id = ?)', $sql);
 	}
 
 	/**
@@ -70,8 +70,8 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testSelect() {
 		$sql = $this->object->select(array('id', 'name'))
 						->from('User')
-						->where(array('name' => 'test', 'id' => 2))->getSql();
-		$this->assertSame('SELECT id,name FROM User WHERE (name = ? AND id = ?)', $sql);
+						->where(array('name like' => 'test', 'id =' => 2))->getSql();
+		$this->assertSame('SELECT id,name FROM User WHERE (name like ? AND id = ?)', $sql);
 	}
 
 	/**
@@ -81,8 +81,8 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testSelect2() {
 		$sql = $this->object->selectDistinct(array('id', 'name'))
 						->from('User')
-						->where(array('name' => 'test', 'id' => 2))->getSql();
-		$this->assertSame('SELECT DISTINCT id,name FROM User WHERE (name = ? AND id = ?)', $sql);
+						->where(array('name like' => 'test', 'id =' => 2))->getSql();
+		$this->assertSame('SELECT DISTINCT id,name FROM User WHERE (name like ? AND id = ?)', $sql);
 	}
 
 	/**
@@ -92,9 +92,9 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testSelect3() {
 		$sql = $this->object->select(array('id', 'name'))
 						->from('User')
-						->where(array('name' => 'test', 'id' => 2))
-						->andWhere(array('item' => 'itemName'))->getSql();
-		$this->assertSame('SELECT id,name FROM User WHERE (name = ? AND id = ?) AND (item = ?)', $sql);
+						->where(array('name like' => 'test', 'id =' => 2))
+						->andWhere(array('item like' => 'itemName'))->getSql();
+		$this->assertSame('SELECT id,name FROM User WHERE (name like ? AND id = ?) AND (item like ?)', $sql);
 	}
 
 	/**
@@ -104,9 +104,9 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testSelect4() {
 		$sql = $this->object->select(array('id', 'name'))
 						->from('User')
-						->where(array('name' => 'test', 'id' => 2))
-						->orWhere(array('item' => 'itemName'))->getSql();
-		$this->assertSame('SELECT id,name FROM User WHERE (name = ? AND id = ?) OR (item = ?)', $sql);
+						->where(array('name like' => 'test', 'id =' => 2))
+						->orWhere(array('item like' => 'itemName'))->getSql();
+		$this->assertSame('SELECT id,name FROM User WHERE (name like ? AND id = ?) OR (item like ?)', $sql);
 	}
 
 	/**
@@ -116,10 +116,10 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testSelect5() {
 		$sql = $this->object->select(array('id', 'name'))
 						->from('User')
-						->leftJoin('Item', array('User.id' => 'Item.id'))
-						->where(array('name' => 'test', 'id' => 2))
+						->leftJoin('Item', array('User.id =' => 'Item.id'))
+						->where(array('name like' => 'test', 'id =' => 2))
 						->getSql();
-		$this->assertSame('SELECT id,name FROM User LEFT OUTER JOIN Item ON User.id = Item.id WHERE (name = ? AND id = ?)', $sql);
+		$this->assertSame('SELECT id,name FROM User LEFT OUTER JOIN Item ON User.id = Item.id WHERE (name like ? AND id = ?)', $sql);
 	}
 
 	/**
@@ -129,11 +129,11 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testSelect6() {
 		$sql = $this->object->select(array('id', 'name'))
 						->from('User')
-						->innerJoin('Item', array('User.id' => 'Item.id'
-													, 'User.name' => 'Item.name'))
-						->where(array('name' => 'test', 'id' => 2))
+						->innerJoin('Item', array('User.id =' => 'Item.id'
+													, 'User.name =' => 'Item.name'))
+						->where(array('name like' => 'test', 'id =' => 2))
 						->getSql();
-		$this->assertSame('SELECT id,name FROM User INNER JOIN Item ON User.id = Item.id AND User.name = Item.name WHERE (name = ? AND id = ?)', $sql);
+		$this->assertSame('SELECT id,name FROM User INNER JOIN Item ON User.id = Item.id AND User.name = Item.name WHERE (name like ? AND id = ?)', $sql);
 	}
 
 	/**
@@ -143,11 +143,11 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testSelect7() {
 		$sql = $this->object->select(array('id', 'name'))
 						->from('User')
-						->leftJoin('Item', array('User.id' => 'Item.id'
-													, 'User.name' => 'Item.name'))
-						->where(array('name' => 'test', 'id' => 2))
+						->leftJoin('Item', array('User.id =' => 'Item.id'
+													, 'User.name =' => 'Item.name'))
+						->where(array('name like' => 'test', 'id =' => 2))
 						->getSql();
-		$this->assertSame('SELECT id,name FROM User LEFT OUTER JOIN Item ON User.id = Item.id AND User.name = Item.name WHERE (name = ? AND id = ?)', $sql);
+		$this->assertSame('SELECT id,name FROM User LEFT OUTER JOIN Item ON User.id = Item.id AND User.name = Item.name WHERE (name like ? AND id = ?)', $sql);
 	}
 
 	/**
@@ -181,9 +181,9 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testSelect10() {
 		$sql = $this->object->select(array('id', 'name'))
 						->from('User')
-						->having(array('id' => 1, 'name' => 'test'))
+						->having(array('id =' => 1, 'name like' => 'test'))
 						->getSql();
-		$this->assertSame('SELECT id,name FROM User HAVING (id = ? AND name = ?)', $sql);
+		$this->assertSame('SELECT id,name FROM User HAVING (id = ? AND name like ?)', $sql);
 	}
 
 	/**
@@ -193,10 +193,10 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testSelect11() {
 		$sql = $this->object->select(array('id', 'name'))
 						->from('User')
-						->having(array('id' => 1, 'name' => 'test'))
-						->andHaving(array('itemName' => 'name', 'itemId' => 1))
+						->having(array('id =' => 1, 'name like' => 'test'))
+						->andHaving(array('itemName like' => 'name', 'itemId =' => 1))
 						->getSql();
-		$this->assertSame('SELECT id,name FROM User HAVING (id = ? AND name = ?) AND (itemName = ? AND itemId = ?)', $sql);
+		$this->assertSame('SELECT id,name FROM User HAVING (id = ? AND name like ?) AND (itemName like ? AND itemId = ?)', $sql);
 	}
 
 	/**
@@ -206,10 +206,10 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 	public function testSelect12() {
 		$sql = $this->object->select(array('id', 'name'))
 						->from('User')
-						->having(array('id' => 1, 'name' => 'test'))
-						->orHaving(array('itemName' => 'name', 'itemId' => 1))
+						->having(array('id =' => 1, 'name like' => 'test'))
+						->orHaving(array('itemName like' => 'name', 'itemId =' => 1))
 						->getSql();
-		$this->assertSame('SELECT id,name FROM User HAVING (id = ? AND name = ?) OR (itemName = ? AND itemId = ?)', $sql);
+		$this->assertSame('SELECT id,name FROM User HAVING (id = ? AND name like ?) OR (itemName like ? AND itemId = ?)', $sql);
 	}
 
 
