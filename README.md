@@ -1,10 +1,11 @@
 ssql
 ====
   
-SSql is a simple database access library.
-It has mainly two features:
-* build a sql with methods and execute it.
-* execute a sql written in a sql-file outside an app.
+SSql is a simple database access library.  
+It has mainly two features:  
+
+1. build a sql with methods and execute it.
+2. execute a sql written in a sql-file outside an app.
 
 Second feature is inspired by the dbflute outside sql.  
 [dbflute](http://dbflute.seasar.org/)  
@@ -20,10 +21,11 @@ SSqlはシンプルなデータベースアクセスライブラリです。
 [dbfluteの外出しSQL](http://dbflute.seasar.org/ja/manual/function/ormapper/outsidesql/index.html)
   
 # Motive
-In the real world, sometimes we need to access databases with more complex sqls than functions ORM has.   
-When executing such a sql with ORM, it is going to be more complicated code generally, and we don't know whether the sql is grammertically corrent.   
+In the real world, sometimes we need to access databases with more complex sqls than functions a ORM library has.   
+When executing them with a ORM, it's going to be more complicated generally.  
+I need to write them in my source code, and I don't know whether they are corrent grammertically.   
 The dbflute has solved such matter with outside sql, however the dbflute is implemented in Java.  
-I have wanted to such a library in PHP, and then implemented a library has outside sql function.
+I have wanted to such a library in PHP, and then implemented a library that has outside sql feature.
 
 # 動機
 実際の業務では、ORMが持っている機能以上のDBへのアクセス処理を実装する必要が時々あります。  
@@ -32,15 +34,15 @@ dbfluteはそのような問題を外出しSQLで解決しています。ただd
 
 # What is the outside sql?
 The outside sql is a function that execute a sql is written in sql file.   
-You write a sql with comment called parameter comment.
+You write a sql with comment that is called parameter comment.
 
 # 外出しSQLって？
 外出しSQLとはテキストファイルに記載されたSQLを実行する機能です。  
 パラメータコメントと呼ばれるコメントとともにSQLを記載します。
 
 # What is the Parameter comment?
-Its example is below.
-It is for controlling sql with IF, BEGIN, etc.
+Its example is below.  
+/*IF */, /*BEGIN*/ or etc. are parameter comments.
 
 ```sql
 /*IF paging*/
@@ -71,8 +73,8 @@ ORDER BY id asc
 [About OutsideSql](http://dbflute.seasar.org/ja/manual/function/ormapper/outsidesql/index.html)
 
 # Differences from dbflute as of now.
-* SSql have not implemented one of parameter comments, FOR yet.
-* dbflute's embedded parameter is written with $, but use @ in SSql
+* SSql have not implemented one of parameter comments, FOR yet
+* dbflute's embedded parameter is written with $, but SSql uses @ 
 
 # 現時点でのdbfluteとの相違点
 * パラメータコメントの一つであるFORコメントはまだ実装していません
@@ -101,12 +103,11 @@ SSql.phpを読み込むだけです。
 
 Note:
 These example are parts of SSql features.  
-There are many another features in SSql, please check sources.  
+There are another features in SSql, please check source code.  
 Of course I will set up documents in the future.
 
-## Simple Query
+## Setup
 
-when you want to execute a simple sql, you can use SQueryManager(Simple Query).  
 Fist of all, set up $config like this,  
 
 ```php
@@ -114,7 +115,11 @@ $config = array('database' => array('dsn' => 'sqlite:./db/db.sqlite3'
 									, 'user' => ''
 									' 'password' => '')
 				'sqlDir' => './sql');
-'```
+```
+
+## Simple Query
+
+When you want to execute a simple sql, you can use SQueryManager(Simple Query).  
 
 ```php
 	$ssql = SSql::connect($this->config);
@@ -130,7 +135,8 @@ $config = array('database' => array('dsn' => 'sqlite:./db/db.sqlite3'
 3. build a sql with Doctrine similar method
 4. chain methods, execute, and get a Result
 
-Update, Delete, Insert are similar to above.
+Update, Delete, Insert are almost same as SELECT.
+
 ```php
 	$ssql = SSql::connect($this->config);
 	$users = $ssql->createSQry()
@@ -150,7 +156,7 @@ Update, Delete, Insert are similar to above.
 					->execute();
 ```
 
-These example build sqls below.
+They build sqls.
 
 ```sql
 DELETE FROM User WHERE name like ?;
@@ -160,7 +166,7 @@ INSERT INTO User (id, name) VALUES (?, ?);
 
 ## Simple Sql
 
-When you want to execute more complicate sql, you can use SSqlManager(Simple Sql).  
+When you want to execute a complicate sql, you can use SSqlManager(Simple Sql).  
 
 ```php
 	$ssql = SSql::connect($this->config);
@@ -171,9 +177,9 @@ When you want to execute more complicate sql, you can use SSqlManager(Simple Sql
 
 ```
 
-0. create sql files wherever you want. it place should be set in $config['sqlDir'].
-1. connect with config and get SSql object(same as Simple Query)
-2. execute selectList with sqlfile name(without extension) and parameters for sqlfile
+1. create sql files wherever you want. it place should be set in $config['sqlDir'].
+2. connect with config and get SSql object(same as Simple Query)
+3. execute selectList with sqlfile name(without extension) and parameters for sqlfile
 
 ```sql:selectUser.sql
 /*IF paging*/
@@ -215,6 +221,32 @@ WHERE
     id = 1
 	AND status = 2
 ORDER BY id asc
+```
+
+If you don't pass id, AND is removed automatically.
+
+```sql:SelectUser.sql
+SELECT
+     id
+     , name
+     , status
+     , created_at
+FROM
+    user
+WHERE
+	status = 2
+ORDER BY id asc
+```
+
+If parameter paging is false, ELSE line is valid and ORDER is trimmed.
+
+```sql
+SELECT count(id)
+FROM
+    user
+WHERE
+    id = 1
+	AND status = 2
 ```
 
 ## Othres
