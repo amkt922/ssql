@@ -1,6 +1,6 @@
 <?php
 /*
-  Copyright 2013, amkt <amkt922@gmail.com>
+  Copyright 2013, amkt922 <amkt922@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,14 +18,21 @@
 namespace SSql\Exception;
 
 /**
- * Description of EndCommentNotFoundException
- *
- * @author amkt
+ * @author amkt922
  */
 class SSqlException extends \RuntimeException {
-	protected $message = null;
 
-	public function __construct($message) {
+	/**
+	 * exception message
+	 * @var string 
+	 */
+	protected $message = '';
+
+	/**
+	 * constructor
+	 * @param string $message
+	 */
+	public function __construct($message = '') {
 		$this->message = $message;
 	}
 }

@@ -1,9 +1,9 @@
 {
-    "name": "amkt/ssql",
-    "description": "the library execute sql simply.",
+    "name": "amkt922/ssql",
+    "description": "The simple database access library.",
     "authors": [
         {
-            "name": "amkt",
+            "name": "amkt922",
             "email": "amkt922@gmail.com"
         }
     ],

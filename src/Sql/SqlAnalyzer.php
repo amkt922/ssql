@@ -1,6 +1,6 @@
 <?php
 /*
-  Copyright 2013, amkt <amkt922@gmail.com>
+  Copyright 2013, amkt922 <amkt922@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 
 namespace SSql\Sql;
 	
-
 use SSql\Sql\SqlTokenizer;
 use SSql\Sql\Node\RootNode;
 use SSql\Sql\Node\IfNode;
@@ -25,7 +24,7 @@ use SSql\Sql\Node\ElseNode;
 use SSql\Exception\EndCommentNotFoundException;
 
 /**
- * @author reimplement in PHP and modified by amkt (originated in dbflute) 
+ * @author reimplement in PHP by amkt922 (originated in dbflute) 
  */
 class SqlAnalyzer {
     

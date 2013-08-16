@@ -1,6 +1,6 @@
 <?php
 /*
-  Copyright 2013, amkt <amkt922@gmail.com>
+  Copyright 2013, amkt922 <amkt922@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ use SSql\Sql\Node\SqlConnectorAdjustable;
 use SSql\Sql\Context\CommandContext;
 
 /**
- * @author reimplement in PHP and modified by amkt (originated in dbflute) 
+ * @author reimplement in PHP by amkt922 (originated in dbflute) 
  */
 class BeginNode extends ScopeNode implements SqlConnectorAdjustable {
     
