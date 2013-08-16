@@ -41,6 +41,7 @@ You write a sql with comment called parameter comment.
 # What is the Parameter comment?
 Its example is below.
 It is for controlling sql with IF, BEGIN, etc.
+
 ```sql
 /*IF paging*/
 SELECT
@@ -82,6 +83,7 @@ ORDER BY id asc
 require_once SSql.php;
 use SSql\SSql;
 ```
+
 just import SSql.php
 
 # SSqlのインストール方法
@@ -89,4 +91,125 @@ just import SSql.php
 require_once SSql.php;
 use SSql\SSql;
 ```
+
 SSql.phpを読み込むだけです。
+
+# Requirements, 環境
+* php >= 5.3
+
+# Usage
+
+Note:
+These example are a part of SSql features.  
+There are many another features in SSql, please check sources.  
+Of course I will set up documents in the future.
+
+when you want to execute a simple sql, you can use SQueryManager(Simple Query).  
+Fist of all, set up econfig array like this,  
+
+```php
+$config = array('database' => array('dsn' => 'sqlite:./db/db.sqlite3'
+									, 'user' => ''
+									' 'password' => '')
+				'sqlDir' => './sql');
+'```
+
+```php
+	$ssql = SSql::connect($this->config);
+	$users = $ssql->createSQry()
+					->select(array('id', 'name'))
+					->from('User')
+					->where(array('name like' => 'sato'))
+					->execute();
+```
+
+1. connect with config and get SSql object
+2. let ssql object know you use SQueryManager wieh createSQry method
+3. build a sql with Doctrine similar method
+4. chain methods, execute, and get a Result
+
+Update, Delete, Insert are similar to above.
+```php
+	$ssql = SSql::connect($this->config);
+	$users = $ssql->createSQry()
+					->delete()
+					->from('User')
+					->where(array('name like' => 'sato'))
+					->execute();
+	$ssql->createSQry()
+					->update('User')
+					->set(array('name' => 'kato'))
+					->where(array('id =' => 1))
+					->execute();
+	$ssql->createSQry()
+					->insert()
+					->into('User', array('id', 'name'))
+					->values(array(array(6, 'tanaka')))
+					->execute();
+```
+
+These example build sqls below.
+
+```sql
+DELETE FROM User WHERE name like ?;
+UPDATE User SET name = ? WHERE id = ?;
+INSERT INTO User (id, name) VALUES (?, ?);
+```
+
+Next, when you want to execute more complicate sql, you can use SSqlManager(Simple Sql).  
+```php
+	$ssql = SSql::connect($this->config);
+	$users = $ssql->createSSql()
+						->selectList('selectUser', array('id' => 1
+														, 'status' => 2
+														, 'paging' => true));		
+
+```
+
+0. create sql file wherever you want. it place should be set in $config['sqlDir'].
+1. connect with config and get SSql object(same as SQryManager)
+2. execute selectList with parameter sql filename and parameter for sqlfile
+
+```sql:SelectUser.sql
+/*IF paging*/
+SELECT
+     id
+     , name
+     , status
+     , created_at
+-- ELSE SELECT count(id)
+/*END*/
+FROM
+    user
+/*BEGIN*/
+WHERE
+    /*IF id != null*/
+    id = /*id*/2
+    /*END*/
+	/*IF status != null*/
+	AND status = /*status*/10
+	/*END*/
+/*IF paging*/
+ORDER BY id asc
+/*END*/
+```
+
+The below sql is going to be built and executed.
+
+```sql:SelectUser.sql
+SELECT
+     id
+     , name
+     , status
+     , created_at
+FROM
+    user
+WHERE
+    id = 1
+	AND status = 2
+ORDER BY id asc
+```
+
+
+
+
