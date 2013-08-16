@@ -8,8 +8,8 @@ env:
   - DB=pgsql
 
 before_script:
-  - if [[ "$DB" == "pgsql" ]]; then psql -c "create database user;"; fi
-  - if [[ "$DB" == "mysql" ]]; then mysql -e "create database user;"; fi
+  - psql -c "create database user;"
+  - mysql -e "create database user;"
 
 script: phpunit --coverage-text
 
