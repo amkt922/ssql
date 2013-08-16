@@ -5,10 +5,8 @@ php:
 
 env:
   - DB=mysql
-  - DB=pgsql
 
 before_script:
-  - psql -c "create database user;"
   - mysql -e "create database user;"
 
 script: phpunit --coverage-text
