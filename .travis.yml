@@ -1,0 +1,18 @@
+languge: php
+
+php:
+  - 5.3
+
+env:
+  - DB=mysql
+  - DB=pgsql
+
+before_script:
+  - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS user;" -U postgres; fi
+  - if [[ "$DB" == "pgsql" ]]; then psql -c "create database user;" -U postgres; fi
+  - if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS user;" -uroot; fi
+
+script: phpunit --coverage-text
+
+notification:
+  email: amkt922@gmail.com
