@@ -100,12 +100,14 @@ SSql.phpを読み込むだけです。
 # Usage
 
 Note:
-These example are a part of SSql features.  
+These example are parts of SSql features.  
 There are many another features in SSql, please check sources.  
 Of course I will set up documents in the future.
 
+## Simple Query
+
 when you want to execute a simple sql, you can use SQueryManager(Simple Query).  
-Fist of all, set up econfig array like this,  
+Fist of all, set up $config like this,  
 
 ```php
 $config = array('database' => array('dsn' => 'sqlite:./db/db.sqlite3'
@@ -156,7 +158,10 @@ UPDATE User SET name = ? WHERE id = ?;
 INSERT INTO User (id, name) VALUES (?, ?);
 ```
 
-Next, when you want to execute more complicate sql, you can use SSqlManager(Simple Sql).  
+## Simple Sql
+
+When you want to execute more complicate sql, you can use SSqlManager(Simple Sql).  
+
 ```php
 	$ssql = SSql::connect($this->config);
 	$users = $ssql->createSSql()
@@ -166,11 +171,11 @@ Next, when you want to execute more complicate sql, you can use SSqlManager(Simp
 
 ```
 
-0. create sql file wherever you want. it place should be set in $config['sqlDir'].
-1. connect with config and get SSql object(same as SQryManager)
-2. execute selectList with parameter sql filename and parameter for sqlfile
+0. create sql files wherever you want. it place should be set in $config['sqlDir'].
+1. connect with config and get SSql object(same as Simple Query)
+2. execute selectList with sqlfile name(without extension) and parameters for sqlfile
 
-```sql:SelectUser.sql
+```sql:selectUser.sql
 /*IF paging*/
 SELECT
      id
@@ -194,7 +199,9 @@ ORDER BY id asc
 /*END*/
 ```
 
-The below sql is going to be built and executed.
+SSql is goint to built a sql below and executed.  
+The original parameters, 2 of id and 10 of status, is trimmed.
+This advantage of sql file with parameter comment is that you can build and test sql in Database tool(e.g MySqlWorkbench), and then controll parameters in you application with parameter.
 
 ```sql:SelectUser.sql
 SELECT
@@ -210,6 +217,21 @@ WHERE
 ORDER BY id asc
 ```
 
+## Othres
+SSql has beginTransaction, commit, rollback method itself.
+
+```php
+	$ssql = SSql::connect($this->config);
+	$ssql->beginTransaction();
+	
+	~~~~~~update data~~~~~~~~
+
+	if ($success) {
+		$ssql->commit();
+	} else {
+		$ssql->rollback();
+	}
+```
 
 
 
