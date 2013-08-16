@@ -1,4 +1,4 @@
-languge: php
+language: php
 
 php:
   - 5.3
@@ -6,9 +6,12 @@ php:
 
 env:
   - DB=mysql
+  - DB=pgsql
 
 before_script:
-  - mysql -e "create database user;"
+  - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS ssql_test;" -U postgres; fi
+  - if [[ "$DB" == "pgsql" ]]; then psql -c "create database ssql_test;" -U postgres; fi
+  - if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS ssql_test;" -uroot; fi
 
 script: 
   - phpunit
