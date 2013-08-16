@@ -2,6 +2,7 @@ languge: php
 
 php:
   - 5.3
+  - 5.4
 
 env:
   - DB=mysql
@@ -9,7 +10,8 @@ env:
 before_script:
   - mysql -e "create database user;"
 
-# script: phpunit --coverage-text
+script: 
+  - phpunit
 
 notification:
   email: amkt922@gmail.com
