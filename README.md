@@ -4,8 +4,8 @@ ssql
 SSql is a simple database access library.  
 It has mainly two features:  
 
-1. build a sql with methods and execute it.
-2. execute a sql written in a sql-file outside an app.
+1. build a sql with methods and execute it(Simple Query)
+2. execute a sql written in a sql-file outside an app(Simple Sql).
 
 Second feature is inspired by the dbflute outside sql.  
 [dbflute](http://dbflute.seasar.org/)  
@@ -238,7 +238,7 @@ WHERE
 ORDER BY id asc
 ```
 
-If parameter paging is false, ELSE line is valid and ORDER is trimmed.
+If parameter paging is false, ELSE line is valid and ORDER is removed.
 
 ```sql
 SELECT count(id)
@@ -250,7 +250,7 @@ WHERE
 ```
 
 ## Othres
-SSql has beginTransaction, commit, rollback method itself.
+SSql has beginTransaction, commit, rollback methods itself.
 
 ```php
 	$ssql = SSql::connect($this->config);
