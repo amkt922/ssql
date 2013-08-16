@@ -114,15 +114,19 @@ class CommandContext {
 
 	public function getArg($name) {
 		$name = trim($name);
+		// if name has dot, it means parameter may be object
 		if (($dotpos = mb_strpos($name, '.')) !== false) {
 			$name = mb_substr($name, $dotpos + 1);
 		}
 		if (is_object($this->args)) {
+			// check if need to call method?
 			if (($pos = mb_strpos($name, '(')) !== false) {
 				$method = mb_substr($name, 0, $pos);
-				$methodParam = mb_substr($name, $pos + 1);
-				$methodParam = mb_substr($methodParam, 0, mb_strlen($methodParam) - 1);
-				if (mb_strpos($methodParam, '\'') === false) {
+				// e.g get (1) and trim ()
+				$methodParam = trim(mb_substr($name, $pos), '()');
+				if (mb_strpos($methodParam, '\'') !== false) {
+					$methodParam = trim($methodParam, '\'');
+				} else {
 					$methodParam = (int)$methodParam;
 				}
 			} else {
