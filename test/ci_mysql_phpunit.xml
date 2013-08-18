@@ -4,10 +4,10 @@
   <php>
 	  <const name="MYSQL_DSN" value="mysql:host=localhost;dbname=ssql_test"/>
 	  <const name="MYSQL_USER" value="root"/>
-	  <const name="MYSQL_PASSWORD" value="admin"/>
-	  <const name="SQLITE_DSN" value="sqlite:./db/testdb.sqlite3"/>
+	  <const name="MYSQL_PASSWORD" value=""/>
   </php>
   <testsuite name="SSql">
     <directory>.</directory>
+	<excleude>SSqlSqliteTest.php</excleude>
   </testsuite>
 </phpunit>

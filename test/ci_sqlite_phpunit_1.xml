@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+  colors="true">
+  <php>
+	  <const name="SQLITE_DSN" value="mysql:host=localhost;dbname=ssql_test"/>
+  </php>
+  <testsuite name="SSql">
+    <directory>.</directory>
+	<excleude>SSqlMySqlTest.php</excleude>
+  </testsuite>
+</phpunit>

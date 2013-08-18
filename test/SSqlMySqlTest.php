@@ -16,9 +16,9 @@ class SSqlMySqlTest extends \PHPUnit_Framework_TestCase {
 	protected $pdo;
 
 	private $config = array('database' 
-			=> array('dsn' => 'mysql:host=localhost;dbname=ssql_test'
-					, 'user' => 'root'
-					, 'password' => 'admin')
+			=> array('dsn' => MYSQL_DSN
+					, 'user' => MYSQL_USER
+					, 'password' => MYSQL_PASSWORD)
 			, 'sqlDir' => './sql/');
 
 	/**
@@ -26,8 +26,8 @@ class SSqlMySqlTest extends \PHPUnit_Framework_TestCase {
 	 * This method is called before a test is executed.
 	 */
 	public static function setUpBeforeClass() {
-		$database = 'mysql:host=localhost;dbname=ssql_test';
-		$pdo = new \PDO($database, 'root', 'admin');
+		$database = MYSQL_DSN;
+		$pdo = new \PDO(MYSQL_DSN, MYSQL_USER, MYSQL_PASSWORD);
 		$pdo->exec('drop table user');
 		$create = <<<SQL
 CREATE TABLE `user` (

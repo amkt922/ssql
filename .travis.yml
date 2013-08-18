@@ -6,15 +6,16 @@ php:
 
 env:
   - DB=mysql
-  - DB=pgsql
+  - DB=sqlite
+  #- DB=pgsql
 
 before_script:
-  - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS ssql_test;" -U postgres; fi
-  - if [[ "$DB" == "pgsql" ]]; then psql -c "create database ssql_test;" -U postgres; fi
+  #- if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS ssql_test;" -U postgres; fi
+  #- if [[ "$DB" == "pgsql" ]]; then psql -c "create database ssql_test;" -U postgres; fi
   - if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS ssql_test;" -uroot; fi
 
 script: 
-  - phpunit -c test/phpunit.xml
+  - phpunit -c test/ci_$DB_phpunit.xml
 
 notification:
   email: amkt922@gmail.com
