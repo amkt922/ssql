@@ -2,7 +2,7 @@
 <phpunit
   colors="true">
   <php>
-	  <const name="SQLITE_DSN" value="mysql:host=localhost;dbname=ssql_test"/>
+	  <const name="SQLITE_DSN" value="sqlite:ssql_test.sqlite3"/>
   </php>
   <testsuites>
 	  <testsuite name="SSqlSqlite">

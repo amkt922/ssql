@@ -13,9 +13,9 @@
   </testsuites>
   <filter>
 	  <whitelist>
-		<directory>.</directory>
+		<directory suffix=".php">.</directory>
 		<exclude>
-			<file>SSqlSqliteTest.php</file>
+			<file suffix=".php">./SSqlSqliteTest.php</file>
 		</exclude>
 	  </whitelist>
   </filter>
