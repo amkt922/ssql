@@ -6,6 +6,6 @@
   </php>
   <testsuite name="SSql">
     <directory>.</directory>
-	<excleude>SSqlMySqlTest.php</excleude>
+	<exclude>SSqlMySqlTest.php</exclude>
   </testsuite>
 </phpunit>
