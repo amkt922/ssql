@@ -6,10 +6,17 @@
 	  <const name="MYSQL_USER" value="root"/>
 	  <const name="MYSQL_PASSWORD" value=""/>
   </php>
-  <testsuite name="SSql">
-    <directory>.</directory>
-	<exclude>
-		<file>SSqlSqliteTest.php</file>
-	</exclude>
-  </testsuite>
+  <testsuites>
+	  <testsuite name="SSqlMySql">
+		<directory>.</directory>
+	  </testsuite>
+  </testsuites>
+  <filter>
+	  <whitelist>
+		<directory>.</directory>
+		<exclude>
+			<file>SSqlSqliteTest.php</file>
+		</exclude>
+	  </whitelist>
+  </filter>
 </phpunit>
