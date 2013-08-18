@@ -12,7 +12,9 @@
 	  </testsuite>
   </testsuites>
   <groups>
-	  <exclude>sqlite</exclude>
+	  <exclude>
+		  <group>sqlite</group>
+	  </exclude>
   </groups>
 
 </phpunit>
