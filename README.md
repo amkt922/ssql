@@ -1,6 +1,8 @@
 ssql
 ====
-  
+
+[![Build Status](https://travis-ci.org/amkt922/ssql.png)](https://travis-ci.org/amkt922/ssql)
+
 SSql is a simple database access library.  
 It has mainly two features:  
 
