@@ -52,6 +52,10 @@ SQL;
 		
 	}
 
+	protected function setUp() {
+		$this->config['sqlDir'] = __FILE__ . $this->config['sqlDir'];
+	}
+
 	/**
 	 * @covers SSql\SSql::from
 	 * @todo   Implement testFrom().
