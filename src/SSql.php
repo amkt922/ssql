@@ -47,7 +47,7 @@ class SSql {
      */
 	private function __construct() {}
 
-    public function connect($config) {
+    public static function connect($config) {
 		if (is_null(self::$instance)) {
 			self::$instance = new self;
 			if (is_array($config)) {
