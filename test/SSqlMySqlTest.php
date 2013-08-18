@@ -15,6 +15,9 @@ class SSqlMySqlTest extends \PHPUnit_Framework_TestCase {
 	protected $object;
 	protected $pdo;
 
+	/**
+	 * @var type 
+	 */
 	private $config = array('database' 
 			=> array('dsn' => MYSQL_DSN
 					, 'user' => MYSQL_USER
@@ -24,6 +27,7 @@ class SSqlMySqlTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * Sets up the fixture, for example, opens a network connection.
 	 * This method is called before a test is executed.
+	 * @group mysql
 	 */
 	public static function setUpBeforeClass() {
 		$database = MYSQL_DSN;
@@ -50,18 +54,24 @@ SQL;
 	/**
 	 * Tears down the fixture, for example, closes a network connection.
 	 * This method is called after a test is executed.
+	 * @group mysql
 	 */
 	public static function tearDownAfterClass() {
 		
 	}
 
+	/*
+	 * @group mysql
+	 * 
+	 */
 	protected function setUp() {
-		$this->config['sqlDir'] = __FILE__ . $this->config['sqlDir'];
+		$this->config['sqlDir'] = __DIR__ . "/" . $this->config['sqlDir'];
 	}
 
 	/**
 	 * @covers SSql\SSql::from
 	 * @todo   Implement testFrom().
+	 * @group mysql
 	 */
 	public function test1() {
 		$ssql = SSql::connect($this->config);
@@ -73,6 +83,7 @@ SQL;
 	/**
 	 * @covers SSql\SSql::from
 	 * @todo   Implement testFrom().
+	 * @group mysql
 	 */
 	public function test2() {
 		$ssql = SSql::connect($this->config);
@@ -81,6 +92,10 @@ SQL;
 		$this->assertSame($users[0]['name'], 'takahashi');
 	}
 
+	/**
+	 * 
+	 * @group mysql
+	 */
 	public function test3() {
 		$ssql = SSql::connect($this->config);
 		$users = $ssql->createSSql()

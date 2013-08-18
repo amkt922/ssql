@@ -9,12 +9,9 @@
 		<directory>.</directory>
 	  </testsuite>
   </testsuites>
-  <filter>
-	  <whitelist>
-		<directory>.</directory>
-		<exclude>
-			<file>SSqlMySqlTest.php</file>
-		</exclude>
-	  </whitelist>
-  </filter>
+  <groups>
+	  <exclude>
+		  <group>mysql</group>
+	  </exclude>
+  </groups>
 </phpunit>

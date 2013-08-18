@@ -22,6 +22,7 @@ class SSqlSqliteTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * Sets up the fixture, for example, opens a network connection.
 	 * This method is called before a test is executed.
+	 * @group sqlite
 	 */
 	public static function setUpBeforeClass() {
 		$pdo = new PDO(SQLITE_DSN);
@@ -47,18 +48,24 @@ SQL;
 	/**
 	 * Tears down the fixture, for example, closes a network connection.
 	 * This method is called after a test is executed.
+	 * @group sqlite
 	 */
 	public static function tearDownAfterClass() {
 		
 	}
 
+	/**
+	 * @group sqlite
+	 * 
+	 */
 	protected function setUp() {
-		$this->config['sqlDir'] = __FILE__ . $this->config['sqlDir'];
+		$this->config['sqlDir'] = __DIR__ . "/" . $this->config['sqlDir'];
 	}
 
 	/**
 	 * @covers SSql\SSql::from
 	 * @todo   Implement testFrom().
+	 * @group sqlite
 	 */
 	public function test1() {
 		$ssql = SSql::connect($this->config);
@@ -69,6 +76,7 @@ SQL;
 	/**
 	 * @covers SSql\SSql::from
 	 * @todo   Implement testFrom().
+	 * @group sqlite
 	 */
 	public function test2() {
 		$ssql = SSql::connect($this->config);
@@ -76,6 +84,10 @@ SQL;
 		$this->assertSame($users[0]['name'], 'sato');
 	}
 
+	/**
+	 * @group sqlite
+	 * 
+	 */
 	public function test3() {
 		$ssql = SSql::connect($this->config);
 		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 2), get_class(new User()));		
@@ -83,6 +95,10 @@ SQL;
 		$this->assertSame($users[0]->getName(), 'suzuki');
 	}
 
+	/**
+	 * @group sqlite
+	 * 
+	 */
 	public function test4() {
 		$ssql = SSql::connect($this->config);
 		$users = $ssql->createSSql()->selectList('selectUserSort'
@@ -92,6 +108,10 @@ SQL;
 		$this->assertSame($users[0]->getName(), 'ito');
 	}
 
+	/**
+	 * @group sqlite
+	 * 
+	 */
 	public function test5() {
 		$ssql = SSql::connect($this->config);
 		$count = $ssql->createSSql()->selectEntity('selectUserSort'
@@ -99,6 +119,10 @@ SQL;
 		$this->assertSame($count['count(id)'], '5');
 	}
 
+	/**
+	 * @group sqlite
+	 * 
+	 */
 	public function test6() {
 		$ssql = SSql::connect($this->config);
 		$users = $ssql->createSQry()->select('*')->from('user')->execute();
@@ -107,6 +131,10 @@ SQL;
 	}
 
 
+	/**
+	 * @group sqlite
+	 * 
+	 */
 	public function test7() {
 		$ssql = SSql::connect($this->config);
 		$ssql->createSQry()->update('User')->set(array('name' => 'kato'))
@@ -116,6 +144,10 @@ SQL;
 		$this->assertSame($users[0]->getName(), 'kato');
 	}
 
+	/**
+	 * 
+	 * @group sqlite
+	 */
 	public function test7_1() {
 		// back to original value.
 		$ssql = SSql::connect($this->config);
@@ -126,6 +158,7 @@ SQL;
 	/**
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
+	 * @group sqlite
 	 */
 	public function test8() {
 		$ssql = SSql::connect($this->config);
@@ -136,6 +169,10 @@ SQL;
 		$this->assertSame($users[0]['name'], 'sato');
 	}
 
+	/**
+	 * @group sqlite
+	 * 
+	 */
 	public function test9() {
 		$ssql = SSql::connect($this->config);
 		$users = $ssql->createSQry()
@@ -147,6 +184,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -160,6 +198,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -174,6 +213,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -190,6 +230,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -206,6 +247,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -221,6 +263,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -235,6 +278,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -249,6 +293,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -263,6 +308,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -278,6 +324,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -294,6 +341,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -312,6 +360,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */
@@ -329,6 +378,7 @@ SQL;
 	}
 
 	/**
+	 * @group sqlite
 	 * @covers SSql\SQueryManager::select
 	 * @todo   Implement testSelect().
 	 */

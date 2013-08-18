@@ -11,12 +11,8 @@
 		<directory>.</directory>
 	  </testsuite>
   </testsuites>
-  <filter>
-	  <whitelist>
-		<directory suffix=".php">.</directory>
-		<exclude>
-			<file suffix=".php">./SSqlSqliteTest.php</file>
-		</exclude>
-	  </whitelist>
-  </filter>
+  <groups>
+	  <exclude>sqlite</exclude>
+  </groups>
+
 </phpunit>
