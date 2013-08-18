@@ -15,7 +15,7 @@ before_script:
   - if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS ssql_test;" -uroot; fi
 
 script: 
-  - phpunit -c test/ci_$DB_phpunit.xml
+  - phpunit -c test/ci_phpunit_$DB.xml
 
 notification:
   email: amkt922@gmail.com
