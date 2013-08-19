@@ -38,7 +38,7 @@ class SSqlPgsqlTest extends \PHPUnit_Framework_TestCase {
 CREATE TABLE `user` (
    `id` integer PRIMARY KEY,
    `name` varchar(45) DEFAULT NULL,
- ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8
+ )
 SQL;
 		$pdo->exec($create);
 		$insert = <<<SQL
