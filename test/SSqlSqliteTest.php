@@ -16,7 +16,7 @@ class SSqlSqliteTest extends \PHPUnit_Framework_TestCase {
 	protected $object;
 	protected $pdo;
 
-	private $config = array('database' => array('dsn' => SQLITE_DSN)
+	private $config = array('database' => array('driver' => 'Sqlite', 'dsn' => SQLITE_DSN)
 								, 'sqlDir' => './sql/');
 
 	/**

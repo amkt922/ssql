@@ -27,11 +27,7 @@ use SSql\Sql\SqlAnalyzer;
  */
 class SSqlManager {
 
-	/**
-	 * PHP Data objects.
-	 * @var PDO
-	 */
-    private $pdo = null;
+    private $con = null;
     
 	/**
 	 * The place to store sql files.
@@ -42,8 +38,8 @@ class SSqlManager {
     /**
      * constructor
      */
-    public function __construct(\PDO $pdo, $sqlDir) {
-		$this->pdo = $pdo;
+    public function __construct($con, $sqlDir) {
+		$this->con = $con;
 		$this->sqlDir = $sqlDir;
 	}
     
@@ -57,7 +53,7 @@ class SSqlManager {
 	}
 
 	private function prepareAndBindVariable($context) {
-		$stmt = $this->pdo->prepare($context->getSql());
+		$stmt = $this->con->getConnection()->prepare($context->getSql());
 		$bindVariables = $context->getBindVariables();
 		foreach ($bindVariables as $index => $value) {
 			$stmt->bindValue($index + 1, $value);
@@ -93,7 +89,7 @@ class SSqlManager {
 
 	public function execute($sql, $params) {
 		$sql = $this->setupSql($sql, $params);
-		return $this->pdo->exec($sql);
+		return $this->con->getConnection()->exec($sql);
 	}
 }
 

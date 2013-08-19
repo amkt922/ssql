@@ -18,10 +18,10 @@ namespace SSql;
 
 require_once "autoload.php";
 
-use \PDO;
 use \InvalidArgumentException;
 use SSql\SSqlManager;
 use SSql\SQueryManager;
+use SSql\Database\DriverManager;
 
 /**
  * SSql factory class.
@@ -30,14 +30,8 @@ use SSql\SQueryManager;
  */
 class SSql {
 
-    private $pdo = null;
+    private $con = null;
     
-    private $dsn = '';
-    
-    private $user = '';
-    
-    private $password = '';    
-
 	private $sqlDir = '';
 
 	private static $instance = null;
@@ -52,7 +46,6 @@ class SSql {
 			self::$instance = new self;
 			if (is_array($config)) {
 				self::$instance->setConfigFromArray($config);
-				self::$instance->setupPDO();
 			} else {
 				throw new \RuntimeException('config should be an array');
 			}
@@ -66,11 +59,11 @@ class SSql {
      * @param array|string  $config  config file for accessing database.
      */
     public function createSSql() {
-        return new SSqlManager($this->pdo, $this->sqlDir);
+        return new SSqlManager($this->con, $this->sqlDir);
     }
 
     public function createSQry() {
-        return new SQueryManager($this->pdo);
+        return new SQueryManager($this->con);
     }
 
 
@@ -83,36 +76,23 @@ class SSql {
             throw new InvalidArgumentException('dsn value should be in database array.');
         }
         $database = $config['database'];
-        $this->dsn = $database['dsn'];
-        if (array_key_exists('user', $database)) {
-            $this->user = $database['user'];
-        }
-        if (array_key_exists('password', $database)) {
-            $this->password = $database['password'];
-        }
+		$this->con = DriverManager::getConnection($database);
 
 		if (array_key_exists('sqlDir', $config)) {
 			$this->sqlDir = $config['sqlDir'];
 		}
     }
 
-	private function setupPDO() {
-        if (is_null($this->pdo)) {
-            $this->pdo = new PDO($this->dsn, $this->user, $this->password);
-			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        }
-    }
-
 	public function beginTransaction() {
-		return $this->pdo->beginTransaction();
+		return $this->con->getConnection()->beginTransaction();
 	}
 
 	public function commit() {
-		return $this->pdo->commit();
+		return $this->con->getConnection()->commit();
 	}
 
 	public function rollback() {
-		return $this->pdo->rollback();
+		return $this->con->getConnection()->rollback();
 	}
 }
 

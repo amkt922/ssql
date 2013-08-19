@@ -19,7 +19,8 @@ class SSqlMySqlTest extends \PHPUnit_Framework_TestCase {
 	 * @var type 
 	 */
 	private $config = array('database' 
-			=> array('dsn' => MYSQL_DSN
+			=> array('driver' => 'Mysql'
+					, 'dsn' => MYSQL_DSN
 					, 'user' => MYSQL_USER
 					, 'password' => MYSQL_PASSWORD)
 			, 'sqlDir' => './sql/');

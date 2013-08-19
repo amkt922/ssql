@@ -30,11 +30,7 @@ use \InvalidArgumentException;
  */
 class SQueryManager {
 
-	/**
-	 * PHP Data objects.
-	 * @var PDO
-	 */
-    private $pdo = null;
+    private $con = null;
 
 	/**
 	 * the sql that is going to be executed.
@@ -51,8 +47,8 @@ class SQueryManager {
     /**
      * constructor
      */
-    public function __construct(PDO $pdo = null) {
-		$this->pdo = $pdo;
+    public function __construct($con = null) {
+		$this->con = $con;
 	}
 
 	public function insert() {
@@ -331,7 +327,7 @@ class SQueryManager {
 
 	public function execute($entityName = null) {
 		$sql = $this->getSql();
-		$stmt = $this->pdo->prepare($sql);
+		$stmt = $this->con->getConnection()->prepare($sql);
 		if (mb_strpos($sql, 'SELECT') === 0) {
 			$stmt->execute($this->inputParameters);
 			if (!is_null($entityName)) {
