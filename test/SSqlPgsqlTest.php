@@ -31,15 +31,13 @@ class SSqlPgsqlTest extends \PHPUnit_Framework_TestCase {
 	 * @group pgsql
 	 */
 	public static function setUpBeforeClass() {
-		$database = PGSQL_DSN;
 		$pdo = new \PDO(PGSQL_DSN, PGSQL_USER, PGSQL_PASSWORD);
 		$pdo->exec('drop table user');
 		$create = <<<SQL
-CREATE TABLE `user` (
-   `user_id` integer,
-   `name` varchar(45) NOT NULL,
-	primary key (id)
- )
+CREATE TABLE user (
+   id int,
+   name varchar(45) NOT NULL
+ );
 SQL;
 		$pdo->exec($create);
 		$insert = <<<SQL
@@ -100,23 +98,23 @@ SQL;
 	public function test3() {
 		$ssql = SSql::connect($this->config);
 		$users = $ssql->createSSql()
-			->selectList('selectUser', array('user_id' => 2), get_class(new PgsqlUser()));		
-		$this->assertSame($users[0]->getUserId(), '2');
+			->selectList('selectUser', array('id' => 2), get_class(new PgsqlUser()));		
+		$this->assertSame($users[0]->getId(), '2');
 		$this->assertSame($users[0]->getName(), 'suzuki');
 	}
 
 }
 
 class PgsqlUser {
-	private $user_id;
+	private $id;
 
 	private $name;
-	public function getUserId() {
-		return $this->user_id;
+	public function getId() {
+		return $this->id;
 	}
 
-	public function setUserId($id) {
-		$this->user_id = $id;
+	public function setId($id) {
+		$this->id = $id;
 	}
 
 	public function getName() {
