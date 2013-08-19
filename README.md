@@ -100,9 +100,9 @@ SSql.phpを読み込むだけです。
 * php >= 5.3
 
 # Limitation, 制限
-Support Sqlite, Mysql as of now, postgresql will be support soon.
+Support Sqlite, Mysql and Postgresql as of now, other databases are not support as of now.
 
-MysqlとSqliteのみサポートしています。Postgresqlはすぐにサポートされる予定です。
+MysqlとSqlite, Postgresqlのみサポートしています。他のデータベースは現時点ではサポートしていません。
 
 # Usage
 Note:
