@@ -36,7 +36,7 @@ class SSqlPgsqlTest extends \PHPUnit_Framework_TestCase {
 		$pdo->exec('drop table user');
 		$create = <<<SQL
 CREATE TABLE `user` (
-   `id` integer,
+   `user_id` integer,
    `name` varchar(45) NOT NULL,
 	primary key (id)
  )
@@ -100,23 +100,23 @@ SQL;
 	public function test3() {
 		$ssql = SSql::connect($this->config);
 		$users = $ssql->createSSql()
-			->selectList('selectUser', array('id' => 2), get_class(new PgsqlUser()));		
-		$this->assertSame($users[0]->getId(), '2');
+			->selectList('selectUser', array('user_id' => 2), get_class(new PgsqlUser()));		
+		$this->assertSame($users[0]->getUserId(), '2');
 		$this->assertSame($users[0]->getName(), 'suzuki');
 	}
 
 }
 
 class PgsqlUser {
-	private $id;
+	private $user_id;
 
 	private $name;
-	public function getId() {
-		return $this->id;
+	public function getUserId() {
+		return $this->user_id;
 	}
 
-	public function setId($id) {
-		$this->id = $id;
+	public function setUserId($id) {
+		$this->user_id = $id;
 	}
 
 	public function getName() {
