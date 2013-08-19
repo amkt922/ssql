@@ -12,6 +12,7 @@
   <groups>
 	  <exclude>
 		  <group>mysql</group>
+		  <group>pgsql</group>
 	  </exclude>
   </groups>
 </phpunit>
