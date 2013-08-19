@@ -5,8 +5,10 @@ ssql
 
 The SSql is a simple database access library.  
 It has two main features:  
-1. build a sql with methods and execute it(Simple Query)
-2. execute a sql written in a sql-file outside an app(Simple Sql).
+
+* build a sql with methods and execute it(Simple Query)
+* execute a sql written in a sql-file outside an app(Simple Sql).
+
 Second one is inspired by the dbflute outside sql.  
 [dbflute](http://dbflute.seasar.org/)  
 [About OutsideSql](http://dbflute.seasar.org/ja/manual/function/ormapper/outsidesql/index.html)
@@ -115,7 +117,7 @@ Fist of all, set up $config like this,
 $config = array('database' => array('driver' => 'Sqlite' <- or Mysql
 									, 'dsn' => 'sqlite:./db/db.sqlite3'
 									, 'user' => ''
-									' 'password' => '')
+									, 'password' => '')
 				'sqlDir' => './sql');
 ```
 
