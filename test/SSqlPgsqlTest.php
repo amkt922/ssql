@@ -37,7 +37,7 @@ class SSqlPgsqlTest extends \PHPUnit_Framework_TestCase {
 		$create = <<<SQL
 CREATE TABLE `user` (
    `id` integer PRIMARY KEY,
-   `name` varchar(45) DEFAULT NULL,
+   `name` varchar(45) NOT NULL,
  )
 SQL;
 		$pdo->exec($create);
