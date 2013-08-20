@@ -24,7 +24,7 @@ use SSql\Sql\Node\ParameterFinder;
 /**
  * @author reimplement in PHP by amkt922 (originated in dbflute) 
  */
-class ForNode extends ScopeNode implements SqlConnectorAdjustable {
+class ForNode extends ScopeNode implements SqlConnectorAdjustable, LoopAcceptable {
     
     const PREFIX = 'For ';
 
@@ -56,6 +56,10 @@ class ForNode extends ScopeNode implements SqlConnectorAdjustable {
 				$this->elseNode->acceptContext($context);
 			}
 		}
+	}
+
+	public function acceptLoopInfo($context, $loopInfo) {
+		
 	}
 }
 

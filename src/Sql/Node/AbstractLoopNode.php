@@ -17,32 +17,34 @@
 
 namespace SSql\Sql\Node;
 
-use SSql\Sql\Node\AbstractNode;
+use SSql\Sql\Node\ScopeNode;
 use SSql\Sql\Node\LoopAcceptable;
-
 
 /**
  * @author reimplement in PHP by amkt922 (originated in dbflute) 
  */
-abstract class ScopeNode extends AbstractNode {
-    
-    public function __construct() {
-    }
+abstract class AbstractLoopNode extends ScopeNode implements LoopAcceptable {
 
-	protected function processAcceptingChilden($context, $loopInfo = null) {
-		$children = $this->getChildren();
-		foreach ($children as $child) {
-			if (!is_null($loopInfo)) {
-				if ($child instanceof LoopAcceptable) {
-					$child->acceptLoopInfo($context, $loopInfo);
-				} else {
-					$child->acceptContext($context);
-				}
-			} else {
-				$child->acceptContext($context);
-			}
-		}
+	private $expression = null;
+
+	private $sql = null;
+
+	public function __construct($expession, $sql) {
+		$this->expression = $expession;
+		$this->sql = $sql;
 	}
-	
-}
 
+	public function acceptContext($context) {
+		//TODO imple throw exception	
+	}
+
+	public function acceptLoopInfo($context, $loopInfo) {
+		if (!$this->isValid($loopInfo->getLoopSize(), $loopInfo->getLoopIndex())) {
+			return;
+		}
+		$this->processAcceptingChilden($context, $loopInfo);	
+	}
+
+	abstract function isValid($loopSize, $loopIndex);
+
+}

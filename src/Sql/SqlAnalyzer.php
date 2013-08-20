@@ -20,8 +20,15 @@ namespace SSql\Sql;
 use SSql\Sql\SqlTokenizer;
 use SSql\Sql\Node\RootNode;
 use SSql\Sql\Node\IfNode;
+use SSql\Sql\Node\ForNode;
 use SSql\Sql\Node\ElseNode;
+use SSql\Sql\Node\LoopFirstNode;
+use SSql\Sql\Node\LoopNextNode;
+use SSql\Sql\Node\LoopLastNode;
+use SSql\Sql\Node\LoopVariableNodeFactory;
 use SSql\Exception\EndCommentNotFoundException;
+use SSql\Exception\ForCommentConditionEmptyException;
+use SSql\Exception\IfCommentConditionEmptyException;
 
 /**
  * @author reimplement in PHP by amkt922 (originated in dbflute) 
@@ -150,6 +157,10 @@ class SqlAnalyzer {
 			$this->parseBegin();
 		} else if ($this->isIfComment($token)) {
 			$this->parseIf();
+		} else if ($this->isForComment($token)) {
+			$this->parseFor();
+		} else if ($this->isLoopVariableComment($token)) {
+			$this->parseLoopVariable();
 		} else if ($this->isEndComment($token)) {
 			return;
 		} else {
@@ -178,14 +189,49 @@ class SqlAnalyzer {
         $comment = $this->tokenizer->getToken();
         $condition = trim(mb_substr($comment, mb_strlen(Node\IfNode::PREFIX)));
 		if (empty($condition)) {
-			throw new \SSql\Exception\IfCommentConditionEmptyException();
+			throw new IfCommentConditionEmptyException();
 		}
-        $ifNode = new Node\IfNode($condition, $this->sql);
+        $ifNode = new IfNode($condition, $this->sql);
         $this->peekNodeStack()->addChild($ifNode);
         array_push($this->nodeStack, $ifNode);
         $this->parseEnd();
 	}
 
+	protected function isForComment($comment) {
+		return mb_strpos($comment, ForNode::PREFIX) === 0;
+	}
+
+	protected function parseFor() {
+        $comment = $this->tokenizer->getToken();
+        $condition = trim(mb_substr($comment, mb_strlen(Node\ForNode::PREFIX)));
+		if (empty($condition)) {
+			throw new ForCommentConditionEmptyException();
+		}
+        $forNode = new ForNode($condition, $this->sql);
+        $this->peekNodeStack()->addChild($forNode);
+        array_push($this->nodeStack, $forNode);
+        $this->parseEnd();
+	}
+
+	protected function isLoopVariableComment($comment) {
+		return mb_strpos($comment, LoopFirstNode::MARK) === 0 
+				|| mb_strpos($comment, LoopNextNode::MARK) === 0 
+				|| mb_strpos($comment, LoopLastNode::MARK) === 0;
+	}
+
+	public function parseLoopVariableComment() {
+        $comment = $this->tokenizer->getToken();
+		$spPos = mb_strpos($comment, ' ');
+        $mark = trim(mb_substr($comment, 0, $spPos - 1));
+        $condition = trim(mb_substr($comment, $spPos));
+		$loopVariableNode = LoopVariableNodeFactory::create($mark, $condition, $this->sql);	
+        $this->peekNodeStack()->addChild($loopVariableNode);
+		if (substr_count($condition, "'") < 2) {
+			array_push($this->nodeStack, $forNode);
+			$this->parseEnd();
+		}
+	}
+	
 	protected function isEndComment($comment) {
 		return 'END' === $comment;
 	}
