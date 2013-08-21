@@ -75,11 +75,9 @@ ORDER BY id asc
 [About OutsideSql](http://dbflute.seasar.org/ja/manual/function/ormapper/outsidesql/index.html)
 
 # Differences from dbflute as of now.
-* SSql have not implemented parameter comment, FOR yet
 * dbflute's embedded parameter is written with $, but SSql uses @ 
 
 # 現時点でのdbfluteとの相違点
-* パラメータコメントのFORコメントはまだ実装していません
 * dbfluteの埋め込み変数は$を使いますが、SSqlでは@を使います
 
 # How to install the SSql.
