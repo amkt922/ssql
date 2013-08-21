@@ -409,6 +409,53 @@ SQL;
 	}
 
 
+	/**
+	 * @group sqlite
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test24() {
+		$ssql = SSql::connect($this->config);
+		$ssql->beginTransaction();
+		$ssql->createSQry()->insert()
+						->into('User', array('id', 'name'))
+						->values(array(array(6, 'tanaka')))
+						->execute();
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->execute();
+		$this->assertSame(count($users), 6);
+		$ssql->rollback();
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->execute();
+		$this->assertSame(count($users), 5);
+	}
+
+	/**
+	 * @group sqlite
+	 * @covers SSql\SQueryManager::select
+	 * @todo   Implement testSelect().
+	 */
+	public function test25() {
+		$ssql = SSql::connect($this->config);
+		$ssql->beginTransaction();
+		$ssql->createSQry()->insert()
+						->into('User', array('id', 'name'))
+						->values(array(array(6, 'tanaka')))
+						->execute();
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->execute();
+		$this->assertSame(count($users), 6);
+		$ssql->commit();
+		$users = $ssql->createSQry()->select(array('id', 'name'))
+						->from('User')
+						->execute();
+		$this->assertSame(count($users), 6);
+	}
+
+
 }
 
 class User {
