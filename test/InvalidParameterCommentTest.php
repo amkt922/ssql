@@ -78,7 +78,6 @@ class InvalidParameterCommentTest extends \PHPUnit_Framework_TestCase {
    }
 
    /**
-    * @expectedException \SSql\Exception\BindVariableNotFoundValueException
     */
    public function test4() {
 		$sql = "/*IF a != null*/a = /*b*/1/*END*/";
@@ -91,7 +90,7 @@ class InvalidParameterCommentTest extends \PHPUnit_Framework_TestCase {
 
    /**
     */
-   public function test4ok() {
+   public function test5() {
 		$sql = "/*IF a != null*/a = /*b*/1/*END*/";
 		$an = new SqlAnalyzer($sql);
 		$node = $an->analyze();
@@ -100,6 +99,18 @@ class InvalidParameterCommentTest extends \PHPUnit_Framework_TestCase {
 		$node->acceptContext($context);
 		$this->assertTrue(true);
    }
+
+   /**
+    */
+   public function test6() {
+		$sql = "/*IF a != null*/a = /*b*/1/*END*/";
+		$an = new SqlAnalyzer($sql);
+		$node = $an->analyze();
+		$param = array('a' => 4999, 'b' => null);
+		$context = Context\CommandContext::createCommandContext($param);
+		$node->acceptContext($context);
+   }
+
 
 }
 

@@ -394,6 +394,21 @@ SQL;
 		$this->assertSame(count($users), 5);
 	}
 
+	/**
+	 * @covers SSql\SSql::from
+	 * @todo   Implement testFrom().
+	 * @group sqlite
+	 */
+	public function test23() {
+		$ssql = SSql::connect($this->config);
+		$users = $ssql->createSSql()->selectList('selectUserFor'
+												, array('idList' => array(2,3,4)));		
+		$this->assertSame($users[0]['name'], 'suzuki');
+		$this->assertSame($users[1]['name'], 'takahashi');
+		$this->assertSame($users[2]['name'], 'tanaka');
+	}
+
+
 }
 
 class User {

@@ -27,7 +27,7 @@ class LoopNextNode extends AbstractLoopNode {
     const MARK = 'NEXT';
     
     public function __construct($expression, $sql) {
-		parent::__construct($expession, $sql);
+		parent::__construct($expression, $sql);
     }
 
 	public function isValid($loopSize, $loopIndex) {

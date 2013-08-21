@@ -27,14 +27,38 @@ class ForNodeTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function test1() {
-		$sql = "/*FOR userList*/username = /*#current*//*END*/";
+		$sql = "/*BEGIN*//*FOR userList*//*NEXT 'and '*/username like /*#current*/'kato'/*END*//*END*/";
 		$an = new SqlAnalyzer($sql);
 		$node = $an->analyze();
-		$param = array('a' => 4999);
+		$param = array('userList' => array('sato', 'suzuki', 'takahashi'));
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
 		echo $testSql = $context->getSql();
-		$this->assertSame('a = 4999', $testSql);	
+		$this->assertSame("username like ? and username like ? and username like ?", $testSql);	
    }
+
+    public function test2() {
+		$sql = "/*BEGIN*/where /*FOR userList*//*FIRST*/and (/*END*//*NEXT 'or '*/username like /*#current*/'kato'/*LAST*/)/*END*//*END*//*END*/";
+		$an = new SqlAnalyzer($sql);
+		$node = $an->analyze();
+		$param = array('userList' => array('sato', 'suzuki', 'takahashi'));
+		$context = Context\CommandContext::createCommandContext($param);
+		$node->acceptContext($context);
+		echo $testSql = $context->getSql();
+		$this->assertSame("where (username like ? or username like ? or username like ?)", $testSql);	
+   }
+
+    public function test3() {
+		$sql = "/*BEGIN*/where /*IF id != null*/id = /*id*/3/*END*//*FOR userList*//*FIRST*/ and (/*END*//*NEXT 'or '*/username like /*#current*/'kato'/*LAST*/)/*END*//*END*//*END*/";
+		$an = new SqlAnalyzer($sql);
+		$node = $an->analyze();
+		$param = array('userList' => array('sato', 'suzuki', 'takahashi')
+						, 'id' => 3);
+		$context = Context\CommandContext::createCommandContext($param);
+		$node->acceptContext($context);
+		echo $testSql = $context->getSql();
+		$this->assertSame("where id = ? and (username like ? or username like ? or username like ?)", $testSql);	
+   }
+
 
 }

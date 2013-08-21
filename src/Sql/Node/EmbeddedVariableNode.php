@@ -22,15 +22,8 @@ namespace SSql\Sql\Node;
  */
 class EmbeddedVariableNode extends VariableNode {
 
-	const PREFIX_NORMAL = '@';
 
-	const PREFIX_REPLACE_ONLY = '@@';
-
-	const PREFIX_TERMINAL_DOT = '@.';
-    
-	public function doAcceptContext($context) {
-		$expression = $this->getRemovePrefix();
-		$value = $context->getArg($expression);
+	public function doAcceptContext($context, $value) {
 		if (is_null($value)) {
 			$context->addSql('null');
 		} else if (is_bool($value)) {
@@ -38,7 +31,6 @@ class EmbeddedVariableNode extends VariableNode {
 		} else if (mb_strpos($this->testValue, '\'') === 0) {
 			$context->addSql('\'' . $value . '\'');
 		} else {
-			$value = $context->getArg($expression);
 			if (is_array($value)) {
 				if (mb_strpos($this->testValue, '\'') !== false) {
 					$glue = '\',\'';
@@ -61,13 +53,6 @@ class EmbeddedVariableNode extends VariableNode {
 		}
 	}
 
-	private function getRemovePrefix() {
-		if (mb_strpos($this->expression, self::PREFIX_REPLACE_ONLY) === 0
-				|| mb_strpos($this->expression, self::PREFIX_TERMINAL_DOT) === 0) {
-			return mb_substr($this->expression, 2);
-		} else {
-			return mb_substr($this->expression, 1);
-		}
-	}	
+
 }
 

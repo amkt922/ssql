@@ -17,6 +17,8 @@
 
 namespace SSql\Sql\Context;
 
+use SSql\Exception\NotFoundValueInParameterException;
+
 /**
  * @author reimplement in PHP by amkt922 (originated in dbflute) 
  */

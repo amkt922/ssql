@@ -219,15 +219,21 @@ class SqlAnalyzer {
 				|| mb_strpos($comment, LoopLastNode::MARK) === 0;
 	}
 
-	public function parseLoopVariableComment() {
+	public function parseLoopVariable() {
         $comment = $this->tokenizer->getToken();
 		$spPos = mb_strpos($comment, ' ');
-        $mark = trim(mb_substr($comment, 0, $spPos - 1));
-        $condition = trim(mb_substr($comment, $spPos));
+		// FIRST,LAST nodes has not condition.
+		if ($spPos === false) {
+        	$mark = $comment;
+        	$condition = '';
+		} else {
+        	$mark = trim(mb_substr($comment, 0, $spPos));
+        	$condition = mb_substr($comment, $spPos);
+		}
 		$loopVariableNode = LoopVariableNodeFactory::create($mark, $condition, $this->sql);	
         $this->peekNodeStack()->addChild($loopVariableNode);
 		if (substr_count($condition, "'") < 2) {
-			array_push($this->nodeStack, $forNode);
+			array_push($this->nodeStack, $loopVariableNode);
 			$this->parseEnd();
 		}
 	}

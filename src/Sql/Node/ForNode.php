@@ -18,15 +18,14 @@
 namespace SSql\Sql\Node;
 
 use SSql\Sql\Node\SqlConnectorAdjustable;
-use SSql\Sql\Node\IfCommentEvaluator;
-use SSql\Sql\Node\ParameterFinder;
+use SSql\Sql\Node\ScopeNode;
 
 /**
  * @author reimplement in PHP by amkt922 (originated in dbflute) 
  */
 class ForNode extends ScopeNode implements SqlConnectorAdjustable, LoopAcceptable {
     
-    const PREFIX = 'For ';
+    const PREFIX = 'FOR ';
 
 	const CURRENT_VARIABLE = '#current';
     

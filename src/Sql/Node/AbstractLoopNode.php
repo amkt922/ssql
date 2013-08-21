@@ -31,7 +31,7 @@ abstract class AbstractLoopNode extends ScopeNode implements LoopAcceptable {
 	private $sql = null;
 
 	public function __construct($expession, $sql) {
-		$this->expression = $expession;
+		$this->expression = str_replace("'", "", $expession);
 		$this->sql = $sql;
 	}
 

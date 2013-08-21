@@ -27,7 +27,7 @@ class LoopLastNode extends AbstractLoopNode {
     const MARK = 'LAST';
     
     public function __construct($expression, $sql) {
-		parent::__construct($expession, $sql);
+		parent::__construct($expression, $sql);
     }
 
 	public function isValid($loopSize, $loopIndex) {

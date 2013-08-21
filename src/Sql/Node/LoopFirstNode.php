@@ -27,7 +27,7 @@ class LoopFirstNode extends AbstractLoopNode implements SqlConnectorAdjustable {
     const MARK = 'FIRST';
     
     public function __construct($expression, $sql) {
-		parent::__construct($expession, $sql);
+		parent::__construct($expression, $sql);
     }
 
 	public function isValid($loopSize, $loopIndex) {

@@ -18,12 +18,19 @@
 namespace SSql\Sql\Node;
 
 use SSql\Sql\Node\AbstractNode;
+use SSql\Sql\Node\LoopAcceptable;
 /**
  * @author reimplement in PHP by amkt922 (originated in dbflute) 
  */
-abstract class VariableNode extends AbstractNode {
+abstract class VariableNode extends AbstractNode implements LoopAcceptable {
+
+	const PREFIX_NORMAL = '@';
+
+	const PREFIX_REPLACE_ONLY = '@@';
+
+	const PREFIX_TERMINAL_DOT = '@.';
     
-    protected  $expression = null;
+	protected  $expression = null;
     protected  $testValue = null;
     
     public function __construct($expression, $testValue) {
@@ -32,10 +39,35 @@ abstract class VariableNode extends AbstractNode {
     }
 
 	public function acceptContext($context) {
-		$this->doAcceptContext($context);
+		$this->doAccept($context);
 	}
 
-	abstract public function doAcceptContext($context);
+    public function acceptLoopInfo($context, $loopInfo) {
+		if ($this->expression === ForNode::CURRENT_VARIABLE) {
+			$parameter = $loopInfo->getCurrentParameter();
+			$this->doAcceptContext($context, $parameter);
+		} else {
+			$this->doAccept($context);
+		}
+	}
 
+	private function doAccept($context) {
+		$expression = $this->getRemovePrefix();
+		$parameter = $context->getArg($expression);
+		$this->doAcceptContext($context, $parameter);
+	}
+
+	abstract public function doAcceptContext($context, $parameter);
+
+	private function getRemovePrefix() {
+		if (mb_strpos($this->expression, self::PREFIX_REPLACE_ONLY) === 0
+				|| mb_strpos($this->expression, self::PREFIX_TERMINAL_DOT) === 0) {
+			return mb_substr($this->expression, 2);
+		} else if (mb_strpos($this->expression, self::PREFIX_NORMAL) === 0) {
+			return mb_substr($this->expression, 1);
+		} else {
+			return $this->expression;
+		}
+	}	
 }
 
