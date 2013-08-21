@@ -40,26 +40,43 @@ class ForNode extends ScopeNode implements SqlConnectorAdjustable, LoopAcceptabl
 		$this->sql = $sql;
     }
 
-	public function setElseNode($elseNode) {
-		$this->elseNode = $elseNode;
-	}
-
 	public function acceptContext($context) {
-		$parameterFinder = new ParameterFinder($context);
-		$evaluator = new IfCommentEvaluator($this->condition, $this->sql, $parameterFinder);
-		$result = $evaluator->evaluate();
-		if ($result) {
-			$this->processAcceptingChilden($context);
-			$context->setEnabled(true);
-		} else {
-			if ($this->elseNode != null) {
-				$this->elseNode->acceptContext($context);
-			}
-		}
+		$this->doAccept($context, null);
 	}
 
 	public function acceptLoopInfo($context, $loopInfo) {
-		
+		if ($this->expression === self::CURRENT_VARIABLE) {
+			$parameter = $loopInfo->getCurrentParmeter();
+			$this->doAcceptWithParameter($context, $parameter, $loopInfo);
+		} else {
+			$this->doAccept($context, $loopInfo);
+		}
 	}
+
+	private function doAccept($context, $loopInfo) {
+		$parameter = $context->getArg($this->expression);
+		$this->doAcceptWithParameter($context, $parameter, $loopInfo);
+	}
+
+	private function doAcceptWithParameter($context, $parameter, $parentLoop) {
+		if (is_null($parameter)) {
+			return;
+		}
+		$loopInfo = new LoopInfo();
+		$loopInfo->setParentLoop($parentLoop);
+		$loopInfo->setExpression($this->expression);
+		$loopInfo->setSql($this->sql);
+		$loopInfo->setParameterList($parameter);
+		$loopSize = count($parameter);
+		$loopInfo->setLoopSize($loopSize);
+		foreach ($parameter as $index => $value) {
+			$loopInfo->setLoopIndex($index);
+			$this->processAcceptingChilden($context, $loopInfo);
+		}
+		if ($loopSize > 0) {
+			$context->setEnabled(true);
+		}
+	}
+
 }
 

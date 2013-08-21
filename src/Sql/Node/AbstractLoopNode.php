@@ -19,6 +19,7 @@ namespace SSql\Sql\Node;
 
 use SSql\Sql\Node\ScopeNode;
 use SSql\Sql\Node\LoopAcceptable;
+use SSql\Exception\LoopVariableCommentOutOfForCommentException;
 
 /**
  * @author reimplement in PHP by amkt922 (originated in dbflute) 
@@ -35,13 +36,14 @@ abstract class AbstractLoopNode extends ScopeNode implements LoopAcceptable {
 	}
 
 	public function acceptContext($context) {
-		//TODO imple throw exception	
+		throw new LoopVariableCommentOutOfForCommentException;
 	}
 
 	public function acceptLoopInfo($context, $loopInfo) {
 		if (!$this->isValid($loopInfo->getLoopSize(), $loopInfo->getLoopIndex())) {
 			return;
 		}
+		$context->addSql($this->expression);
 		$this->processAcceptingChilden($context, $loopInfo);	
 	}
 
