@@ -224,15 +224,4 @@ class SQueryManagerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertSame('UPDATE User SET id = ?,name = ?', $sql);
 	}
 
-	/**
-	 * @covers SSql\SQueryManager::execute
-	 * @todo   Implement testExecute().
-	 */
-public function testExecute() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-				'This test has not been implemented yet.'
-		);
-	}
-
 }
