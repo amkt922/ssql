@@ -8,6 +8,7 @@
 	  <const name="PGSQL_DSN" value="pgsql:host=localhost;dbname=ssql_test"/>
 	  <const name="PGSQL_USER" value="postgres"/>
 	  <const name="PGSQL_PASSWORD" value="postgres"/>
+      <const name="PGSQL_SCHEMA" value="public"/>
 	  <const name="SQLITE_DSN" value="sqlite:./db/testdb.sqlite3"/>
   </php>
   <testsuite name="SSql">

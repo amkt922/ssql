@@ -5,6 +5,7 @@
 	  <const name="PGSQL_DSN" value="pgsql:host=localhost;dbname=ssql_test"/>
 	  <const name="PGSQL_USER" value="postgres"/>
 	  <const name="PGSQL_PASSWORD" value=""/>
+      <const name="PGSQL_SCHEMA" value="public"/>
   </php>
   <testsuites>
 	  <testsuite name="SSqlMySql">

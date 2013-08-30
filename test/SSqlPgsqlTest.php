@@ -22,7 +22,8 @@ class SSqlPgsqlTest extends \PHPUnit_Framework_TestCase {
 			=> array('driver' => 'Postgres'
 					, 'dsn' => PGSQL_DSN
 					, 'user' => PGSQL_USER
-					, 'password' => PGSQL_PASSWORD)
+					, 'password' => PGSQL_PASSWORD
+                    , 'schema' => PGSQL_SCHEMA)
 			, 'sqlDir' => './sql/');
 
 	/**
@@ -32,6 +33,7 @@ class SSqlPgsqlTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public static function setUpBeforeClass() {
 		$pdo = new \PDO(PGSQL_DSN, PGSQL_USER, PGSQL_PASSWORD);
+        $pdo->exec('SET search_path TO ' . PGSQL_SCHEMA);
 		$pdo->exec('drop table user');
 		$create = <<<SQL
 CREATE TABLE user (
