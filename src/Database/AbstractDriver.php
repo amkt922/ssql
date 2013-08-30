@@ -16,7 +16,9 @@
  */
 
 namespace SSql\Database;
-	
+
+use PDO;
+
 /**
  * @author amkt922
  */
@@ -33,6 +35,16 @@ abstract class AbstractDriver {
 	public function getConnection () {
 		return $this->pdo;
 	}
+
+    public function close() {
+        $this->pdo = null;
+    }
+
+    protected function execute($sql, $params = array(), $prepareOptions = array()) {
+        $stmt = $this->pdo->prepare($sql, $prepareOptions);
+        $stmt->setFetchMode(PDO::FETCH_LAZY);
+        return $stmt->execute($params);
+    }
 
 	abstract public function connect();
 

@@ -32,10 +32,10 @@ class Postgres extends AbstractDriver {
 							, $this->config['password']
 							, $options);
 		if (isset($this->config['encoding'])) {
-			$this->pdo->execute('SET NAMES ' . $this->config['encoding']);
+			$this->execute('SET NAMES ' . $this->config['encoding']);
 		}
 		if (isset($this->config['schema'])) {
-			$this->pdo->execute('SET search_path TO ' . $this->config['schema']);
+			$this->execute('SET search_path TO ' . $this->config['schema']);
 		}
 	}
 

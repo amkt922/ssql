@@ -12,8 +12,7 @@ class SSqlPgsqlTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @var SSql
 	 */
-	protected $object;
-	protected $pdo;
+	protected $ssql;
 
 	/**
 	 * @var type 
@@ -34,22 +33,28 @@ class SSqlPgsqlTest extends \PHPUnit_Framework_TestCase {
 	public static function setUpBeforeClass() {
 		$pdo = new \PDO(PGSQL_DSN, PGSQL_USER, PGSQL_PASSWORD);
         $pdo->exec('SET search_path TO ' . PGSQL_SCHEMA);
-		$pdo->exec('drop table user');
-		$create = <<<SQL
-CREATE TABLE user (
+		$r = $pdo->exec('drop table ' . PGSQL_SCHEMA . '.user');
+		$create = 'CREATE TABLE ' .PGSQL_SCHEMA . '.';
+        $create2 = <<<SQL
+user (
    id int,
    name varchar(45) NOT NULL
  );
 SQL;
+        $create = $create . $create2;
 		$pdo->exec($create);
-		$insert = <<<SQL
-insert into user values(1, 'sato');
-insert into user values(2, 'suzuki');
-insert into user values(3, 'takahashi');
-insert into user values(4, 'tanaka');
-insert into user values(5, 'ito');
-SQL;
-		$pdo->exec($insert);
+
+		$insert = "insert into " . PGSQL_SCHEMA . ".user values(1, 'sato')";
+        $pdo->exec($insert);
+        $insert = "insert into " . PGSQL_SCHEMA . ".user values(2, 'suzuki')";
+        $pdo->exec($insert);
+        $insert = "insert into " . PGSQL_SCHEMA . ".user values(3, 'takahashi')";
+        $pdo->exec($insert);
+        $insert = "insert into " . PGSQL_SCHEMA . ".user values(4, 'tanaka')";
+        $pdo->exec($insert);
+        $insert = "insert into " . PGSQL_SCHEMA . ".user values(5, 'ito')";
+        $pdo->exec($insert);
+
 	}
 
 	/**
@@ -67,7 +72,11 @@ SQL;
 	 */
 	protected function setUp() {
 		$this->config['sqlDir'] = __DIR__ . "/" . $this->config['sqlDir'];
+        $this->ssql = SSql::connect($this->config);
 	}
+    protected function tearDown() {
+        $this->ssql->close();
+    }
 
 	/**
 	 * @covers SSql\SSql::from
@@ -75,9 +84,9 @@ SQL;
 	 * @group pgsql
 	 */
 	public function test1() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSSql()
-			->selectList('selectUser', array());		
+			->selectList('selectUserPgSql', array('schema' => PGSQL_SCHEMA));
 		$this->assertSame(count($users), 5);
 	}
 
@@ -87,9 +96,9 @@ SQL;
 	 * @group pgsql
 	 */
 	public function test2() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSSql()
-					->selectList('selectUser', array('id' => 3));		
+					->selectList('selectUserPgSql', array('id' => 3, 'schema' => PGSQL_SCHEMA));
 		$this->assertSame($users[0]['name'], 'takahashi');
 	}
 
@@ -98,10 +107,10 @@ SQL;
 	 * @group pgsql
 	 */
 	public function test3() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSSql()
-			->selectList('selectUser', array('id' => 2), get_class(new PgsqlUser()));		
-		$this->assertSame($users[0]->getId(), '2');
+			->selectList('selectUserPgSql', array('id' => 2, 'schema' => PGSQL_SCHEMA), get_class(new PgsqlUser()));
+		$this->assertSame($users[0]->getId(), 2);
 		$this->assertSame($users[0]->getName(), 'suzuki');
 	}
 

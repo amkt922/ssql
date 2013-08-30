@@ -58,6 +58,11 @@ class SSql {
 		}
 		return self::$instance;
 	}
+
+    public function close() {
+        $this->con->close();
+        self::$instance = null;
+    }
     
     /**
      * create instance of myself and load config file.

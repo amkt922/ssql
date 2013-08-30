@@ -13,8 +13,7 @@ class SSqlSqliteTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @var SSql
 	 */
-	protected $object;
-	protected $pdo;
+	protected $ssql;
 
 	private $config = array('database' => array('driver' => 'Sqlite', 'dsn' => SQLITE_DSN)
 								, 'sqlDir' => './sql/');
@@ -60,16 +59,20 @@ SQL;
 	 */
 	protected function setUp() {
 		$this->config['sqlDir'] = __DIR__ . "/" . $this->config['sqlDir'];
+        $this->ssql = SSql::connect($this->config);
 	}
 
+    protected function tearDown() {
+        $this->ssql->close();
+    }
 	/**
 	 * @covers SSql\SSql::from
 	 * @todo   Implement testFrom().
 	 * @group sqlite
 	 */
 	public function test1() {
-		$ssql = SSql::connect($this->config);
-		$users = $ssql->createSSql()->selectList('selectUser', array());		
+        $ssql = $this->ssql;
+		$users = $ssql->createSSql()->selectList('selectUser', array());
 		$this->assertSame(count($users), 5);
 	}
 
@@ -79,8 +82,8 @@ SQL;
 	 * @group sqlite
 	 */
 	public function test2() {
-		$ssql = SSql::connect($this->config);
-		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 1));		
+        $ssql = $this->ssql;
+		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 1));
 		$this->assertSame($users[0]['name'], 'sato');
 	}
 
@@ -89,8 +92,8 @@ SQL;
 	 * 
 	 */
 	public function test3() {
-		$ssql = SSql::connect($this->config);
-		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 2), get_class(new User()));		
+        $ssql = $this->ssql;
+		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 2), get_class(new User()));
 		$this->assertSame($users[0]->getId(), '2');
 		$this->assertSame($users[0]->getName(), 'suzuki');
 	}
@@ -100,7 +103,7 @@ SQL;
 	 * 
 	 */
 	public function test4() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSSql()->selectList('selectUserSort'
 							, array('paging' => true, 'idOrder' => 'desc')
 							, get_class(new User()));		
@@ -113,7 +116,7 @@ SQL;
 	 * 
 	 */
 	public function test5() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$count = $ssql->createSSql()->selectEntity('selectUserSort'
 							, array('paging' => false));		
 		$this->assertSame($count['count(id)'], '5');
@@ -124,7 +127,7 @@ SQL;
 	 * 
 	 */
 	public function test6() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select('*')->from('user')->execute();
 		$this->assertSame($users[0]['id'], '1');
 		$this->assertSame($users[0]['name'], 'sato');
@@ -136,7 +139,7 @@ SQL;
 	 * 
 	 */
 	public function test7() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$ssql->createSQry()->update('User')->set(array('name' => 'kato'))
 					->where(array('id =' => 1))->execute();
 		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 1), get_class(new User()));		
@@ -150,7 +153,7 @@ SQL;
 	 */
 	public function test7_1() {
 		// back to original value.
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$ssql->createSQry()->update('User')->set(array('name' => 'sato'))
 					->where(array('id =' => 1))->execute();
 	}
@@ -161,7 +164,7 @@ SQL;
 	 * @group sqlite
 	 */
 	public function test8() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->where(array('name like' => 'sato'))->execute();
@@ -174,7 +177,7 @@ SQL;
 	 * 
 	 */
 	public function test9() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()
 					->select(array('id', 'name'))
 					->from('User')
@@ -189,7 +192,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test10() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->selectDistinct(array('id', 'name'))
 						->from('User')
 						->where(array('id =' => 2))->execute();
@@ -203,7 +206,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test11() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->where(array('id =' => 3))
@@ -218,7 +221,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test12() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->where(array('id =' => 2))
@@ -235,7 +238,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test13() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->limit(2)
@@ -252,7 +255,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test14() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->where(array('id IN' => array(1,2)))->execute();
@@ -268,7 +271,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test15() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->where(array('id IN' => array(1)))
@@ -283,7 +286,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test16() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->orderBy(array('id' => 'desc'))
@@ -298,7 +301,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test17() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->groupBy(array('id'))
@@ -313,7 +316,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test18() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->groupBy(array('id'))
@@ -329,7 +332,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test19() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->groupBy(array('id'))
@@ -346,7 +349,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test20() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select(array('id', 'name'))
 						->from('User')
 						->groupBy(array('id'))
@@ -365,7 +368,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test21() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$ssql->createSQry()->insert()
 						->into('User', array('id', 'name'))
 						->values(array(array(6, 'tanaka')))
@@ -383,7 +386,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test22() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$ssql->createSQry()->delete()
 						->from('User')
 						->where((array('id =' => 6)))
@@ -400,7 +403,7 @@ SQL;
 	 * @group sqlite
 	 */
 	public function test23() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSSql()->selectList('selectUserFor'
 												, array('idList' => array(2,3,4)));		
 		$this->assertSame($users[0]['name'], 'suzuki');
@@ -415,7 +418,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test24() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$ssql->beginTransaction();
 		$ssql->createSQry()->insert()
 						->into('User', array('id', 'name'))
@@ -438,7 +441,7 @@ SQL;
 	 * @todo   Implement testSelect().
 	 */
 	public function test25() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$ssql->beginTransaction();
 		$ssql->createSQry()->insert()
 						->into('User', array('id', 'name'))

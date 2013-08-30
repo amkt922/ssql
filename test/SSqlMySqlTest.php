@@ -9,14 +9,10 @@ require_once dirname(dirname(__FILE__)) . "/src/SSql.php";
  */
 class SSqlMySqlTest extends \PHPUnit_Framework_TestCase {
 
-	/**
-	 * @var SSql
-	 */
-	protected $object;
-	protected $pdo;
+    private $ssql = null;
 
 	/**
-	 * @var type 
+	 * @var array
 	 */
 	private $config = array('database' 
 			=> array('driver' => 'Mysql'
@@ -50,6 +46,7 @@ insert into user values(4, 'tanaka');
 insert into user values(5, 'ito');
 SQL;
 		$pdo->exec($insert);
+        $pdo = null;
 	}
 
 	/**
@@ -58,16 +55,22 @@ SQL;
 	 * @group mysql
 	 */
 	public static function tearDownAfterClass() {
-		
 	}
 
-	/*
-	 * @group mysql
-	 * 
-	 */
+
+    /*
+     * @group mysql
+     *
+     */
 	protected function setUp() {
 		$this->config['sqlDir'] = __DIR__ . "/" . $this->config['sqlDir'];
+        $this->ssql = SSql::connect($this->config);
 	}
+
+    protected function tearDown() {
+        $this->ssql->close();
+    }
+
 
 	/**
 	 * @covers SSql\SSql::from
@@ -75,9 +78,9 @@ SQL;
 	 * @group mysql
 	 */
 	public function test1() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSSql()
-			->selectList('selectUser', array());		
+			->selectList('selectUser', array());
 		$this->assertSame(count($users), 5);
 	}
 
@@ -87,7 +90,7 @@ SQL;
 	 * @group mysql
 	 */
 	public function test2() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSSql()
 					->selectList('selectUser', array('id' => 3));		
 		$this->assertSame($users[0]['name'], 'takahashi');
@@ -98,7 +101,7 @@ SQL;
 	 * @group mysql
 	 */
 	public function test3() {
-		$ssql = SSql::connect($this->config);
+        $ssql = $this->ssql;
 		$users = $ssql->createSSql()
 			->selectList('selectUser', array('id' => 2), get_class(new MysqlUser()));		
 		$this->assertSame($users[0]->getId(), '2');

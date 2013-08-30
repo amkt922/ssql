@@ -5,7 +5,7 @@
 	  <const name="MYSQL_DSN" value="mysql:host=localhost;dbname=ssql_test"/>
 	  <const name="MYSQL_USER" value="root"/>
 	  <const name="MYSQL_PASSWORD" value="admin"/>
-	  <const name="PGSQL_DSN" value="pgsql:host=localhost;dbname=ssql_test"/>
+	  <const name="PGSQL_DSN" value="pgsql:host=localhost;port=5432;dbname=ssql_test"/>
 	  <const name="PGSQL_USER" value="postgres"/>
 	  <const name="PGSQL_PASSWORD" value="postgres"/>
       <const name="PGSQL_SCHEMA" value="public"/>
