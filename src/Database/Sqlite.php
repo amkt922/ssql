@@ -32,6 +32,24 @@ class Sqlite extends AbstractDriver {
 							, null
 							, $options);
 		
-	}    
+	}
+
+
+    public function tables() {
+        $result = $this->fetchAll("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;", false);
+
+        if (!$result || empty($result)) {
+            return array();
+        }
+
+        $tables = array();
+        foreach ($result as $table) {
+            $tables[] = $table[0]['name'];
+        }
+    }
+
+    public function columnsOf($table) {
+        // TODO: Implement columnsOf() method.
+    }
 }
 

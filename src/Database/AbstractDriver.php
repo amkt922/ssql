@@ -36,5 +36,9 @@ abstract class AbstractDriver {
 
 	abstract public function connect();
 
+    abstract public function tables();
+
+    abstract public function columnsOf($table);
+
 }
 

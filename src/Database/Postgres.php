@@ -34,6 +34,17 @@ class Postgres extends AbstractDriver {
 		if (isset($this->config['encoding'])) {
 			$this->pdo->execute('SET NAMES ' . $this->config['encoding']);
 		}
-	}    
+		if (isset($this->config['schema'])) {
+			$this->pdo->execute('SET search_path TO ' . $this->config['schema']);
+		}
+	}
+
+    public function tables() {
+        // TODO: Implement tables() method.
+    }
+
+    public function columnsOf($table) {
+        // TODO: Implement columnsOf() method.
+    }
 }
 

@@ -31,10 +31,16 @@ use SSql\Database\DriverManager;
 class SSql {
 
     private $con = null;
-    
-	private $sqlDir = '';
 
-	private static $instance = null;
+    /**
+     * @var string The place where sql files are stored
+     */
+    private $sqlDir = '';
+
+    /**
+     * @var SSql instance of SSql
+     */
+    private static $instance = null;
   
     /**
      * constructor

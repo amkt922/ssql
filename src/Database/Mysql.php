@@ -36,6 +36,14 @@ class Mysql extends AbstractDriver {
 							, $this->config['password']
 							, $options);
 		
-	}    
+	}
+
+    public function tables() {
+        // TODO: Implement tables() method.
+    }
+
+    public function columnsOf($table) {
+        // TODO: Implement columnsOf() method.
+    }
 }
 
