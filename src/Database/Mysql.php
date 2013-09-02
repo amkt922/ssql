@@ -39,11 +39,29 @@ class Mysql extends AbstractDriver {
 	}
 
     public function tables() {
-        // TODO: Implement tables() method.
+        $stmt = $this->pdo->prepare('SHOW TABLES FROM ' . $this->fetchDbname());
+        $stmt->execute();
+        $tables = array();
+        while ($table = $stmt->fetch(PDO::FETCH_NUM)) {
+            $tables[] = $table[0];
+        }
+        return $tables;
     }
 
     public function columnsOf($table) {
-        // TODO: Implement columnsOf() method.
+        $stmt = $this->pdo->prepare('SHOW COLUMNS FROM ' . $table);
+        $stmt->execute();
+        $columns = array();
+        while ($column = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $c = array('name' => $column['Field']
+                        , 'type' => $column['Type']
+                        , 'pk' => false);
+            if ($column['Key'] === 'PRI') {
+                $c['pk'] = true;
+            }
+            $columns[] = $c;
+        }
+        return $columns;
     }
 }
 

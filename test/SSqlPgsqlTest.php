@@ -38,7 +38,8 @@ class SSqlPgsqlTest extends \PHPUnit_Framework_TestCase {
         $create2 = <<<SQL
 user (
    id int,
-   name varchar(45) NOT NULL
+   name varchar(45) NOT NULL,
+   PRIMARY KEY (id)
  );
 SQL;
         $create = $create . $create2;
@@ -78,6 +79,20 @@ SQL;
         $this->ssql->close();
     }
 
+    public function testTables() {
+        $tables = $this->ssql->createSQry()->tables();
+        $this->assertSame(count($tables), 1);
+        $this->assertSame($tables[0], 'user');
+    }
+
+    public function testColumns() {
+        $columns = $this->ssql->createSQry()->columnsof('user');
+        $this->assertSame(count($columns), 2);
+        $this->assertSame($columns[0]['name'], 'id');
+        $this->assertSame($columns[0]['pk'], true);
+        $this->assertSame($columns[1]['name'], 'name');
+        $this->assertSame($columns[1]['pk'], false);
+    }
 	/**
 	 * @covers SSql\SSql::from
 	 * @todo   Implement testFrom().

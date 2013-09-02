@@ -46,6 +46,12 @@ abstract class AbstractDriver {
         return $stmt->execute($params);
     }
 
+    protected function fetchDbname() {
+        $matches = array();
+        $dbName = preg_match('/dbname=(.+)(;|$)/', $this->config['dsn'], $matches);
+        return $matches[1];
+    }
+
 	abstract public function connect();
 
     abstract public function tables();

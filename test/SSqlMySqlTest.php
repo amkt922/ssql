@@ -29,7 +29,8 @@ class SSqlMySqlTest extends \PHPUnit_Framework_TestCase {
 	public static function setUpBeforeClass() {
 		$database = MYSQL_DSN;
 		$pdo = new \PDO(MYSQL_DSN, MYSQL_USER, MYSQL_PASSWORD);
-		$pdo->exec('drop table user');
+		$pdo->exec('drop table if exists user');
+        $pdo->exec('drop table if exists item');
 		$create = <<<SQL
 CREATE TABLE `user` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -37,7 +38,18 @@ CREATE TABLE `user` (
    PRIMARY KEY (`id`)
  ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8
 SQL;
-		$pdo->exec($create);
+	$pdo->exec($create);
+	$create2 = <<<SQL
+CREATE TABLE `item` (
+   `id` int(11) NOT NULL AUTO_INCREMENT,
+   `name` varchar(45) DEFAULT NULL,
+   `created_at` timestamp,
+   PRIMARY KEY (`id`)
+ ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8
+SQL;
+		$r = $pdo->exec($create2);
+
+
 		$insert = <<<SQL
 insert into user values(1, 'sato');
 insert into user values(2, 'suzuki');
@@ -71,6 +83,33 @@ SQL;
         $this->ssql->close();
     }
 
+    public function testTables() {
+        $tables = $this->ssql->createSQry()->tables();
+        $this->assertSame(count($tables), 2);
+        sort($tables);
+        $this->assertSame($tables[0], 'item');
+        $this->assertSame($tables[1], 'user');
+    }
+
+    public function testColumns() {
+        $columns = $this->ssql->createSQry()->columnsof('item');
+        $this->assertSame(count($columns), 3);
+        $this->assertSame($columns[0]['name'], 'id');
+        $this->assertSame($columns[0]['pk'], true);
+        $this->assertSame($columns[1]['name'], 'name');
+        $this->assertSame($columns[1]['pk'], false);
+        $this->assertSame($columns[2]['name'], 'created_at');
+        $this->assertSame($columns[2]['pk'], false);
+    }
+
+    public function testColumns2() {
+        $columns = $this->ssql->createSQry()->columnsof('user');
+        $this->assertSame(count($columns), 2);
+        $this->assertSame($columns[0]['name'], 'id');
+        $this->assertSame($columns[0]['pk'], true);
+        $this->assertSame($columns[1]['name'], 'name');
+        $this->assertSame($columns[1]['pk'], false);
+    }
 
 	/**
 	 * @covers SSql\SSql::from

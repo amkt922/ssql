@@ -339,5 +339,13 @@ class SQueryManager {
 			return $stmt->execute($this->inputParameters);
 		}
 	}
+
+    public function tables() {
+        return $this->con->tables();
+    }
+
+    public function columnsOf($table) {
+        return $this->con->columnsOf($table);
+    }
 }
 

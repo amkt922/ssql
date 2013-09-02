@@ -36,20 +36,29 @@ class Sqlite extends AbstractDriver {
 
 
     public function tables() {
-        $result = $this->fetchAll("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;", false);
-
-        if (!$result || empty($result)) {
-            return array();
-        }
-
+        $stmt = $this->pdo->prepare("SELECT name FROM sqlite_master WHERE type='table'");
+        $stmt->execute();
         $tables = array();
-        foreach ($result as $table) {
-            $tables[] = $table[0]['name'];
+        while ($table = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $tables[] = $table['name'];
         }
+        return $tables;
     }
 
     public function columnsOf($table) {
-        // TODO: Implement columnsOf() method.
+        $stmt = $this->pdo->prepare("PRAGMA table_info({$table})");
+        $stmt->execute();
+        $columns = array();
+        while ($column = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $c = array('name' => $column['name']
+                        , 'type' => $column['type']
+                        , 'pk' => false);
+            if ($column['pk'] === '1') {
+                $c['pk'] = true;
+            }
+            $columns[] = $c;
+        }
+        return $columns;
     }
 }
 
