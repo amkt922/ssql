@@ -66,12 +66,20 @@ SQL;
         $this->ssql->close();
     }
 
+	/**
+	 * @group sqlite
+	 *
+	 */
     public function testTables() {
         $tables = $this->ssql->createSQry()->tables();
         $this->assertSame(count($tables), 1);
         $this->assertSame($tables[0], 'user');
     }
 
+	/**
+	 * @group sqlite
+	 *
+	 */
     public function testColumns() {
         $columns = $this->ssql->createSQry()->columnsof('user');
         $this->assertSame(count($columns), 2);

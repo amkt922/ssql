@@ -79,12 +79,18 @@ SQL;
         $this->ssql->close();
     }
 
+    /**
+     * @group pgsql
+     */
     public function testTables() {
         $tables = $this->ssql->createSQry()->tables();
         $this->assertSame(count($tables), 1);
         $this->assertSame($tables[0], 'user');
     }
 
+    /**
+     * @group pgsql
+     */
     public function testColumns() {
         $columns = $this->ssql->createSQry()->columnsof('user');
         $this->assertSame(count($columns), 2);

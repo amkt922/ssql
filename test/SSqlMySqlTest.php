@@ -83,6 +83,9 @@ SQL;
         $this->ssql->close();
     }
 
+    /**
+     * @group mysql
+     */
     public function testTables() {
         $tables = $this->ssql->createSQry()->tables();
         $this->assertSame(count($tables), 2);
@@ -91,6 +94,9 @@ SQL;
         $this->assertSame($tables[1], 'user');
     }
 
+    /**
+     * @group mysql
+     */
     public function testColumns() {
         $columns = $this->ssql->createSQry()->columnsof('item');
         $this->assertSame(count($columns), 3);
@@ -102,6 +108,9 @@ SQL;
         $this->assertSame($columns[2]['pk'], false);
     }
 
+    /**
+     * @group mysql
+     */
     public function testColumns2() {
         $columns = $this->ssql->createSQry()->columnsof('user');
         $this->assertSame(count($columns), 2);
