@@ -19,6 +19,7 @@ namespace SSql;
 require_once "autoload.php";
 
 use \InvalidArgumentException;
+use \RuntimeException;
 use SSql\SSqlManager;
 use SSql\SQueryManager;
 use SSql\Database\DriverManager;
@@ -27,18 +28,25 @@ use SSql\Database\DriverManager;
  * SSql factory class.
  *
  * @author amkt922
+ * @package SSql
  */
 class SSql {
 
+    /**
+     * Hold the database connection
+     * @var mixed The derived class of AbstractDriver
+     */
     private $con = null;
 
     /**
-     * @var string The place where sql files are stored
+     * The place where sql files are stored
+     * @var string
      */
     private $sqlDir = '';
 
     /**
-     * @var SSql instance of SSql
+     * Instance of SSql itself
+     * @var SSql
      */
     private static $instance = null;
   
@@ -47,38 +55,50 @@ class SSql {
      */
 	private function __construct() {}
 
+    /**
+     * Create SSql instance and connect database with passed config.
+     *
+     * @param $config
+     * @return SSql
+     * @throws \RuntimeException when the parameter, config is not array type
+     */
     public static function connect($config) {
 		if (is_null(self::$instance)) {
 			self::$instance = new self;
 			if (is_array($config)) {
 				self::$instance->setConfigFromArray($config);
 			} else {
-				throw new \RuntimeException('config should be an array');
+				throw new RuntimeException('config should be an array');
 			}
 		}
 		return self::$instance;
 	}
 
+    /**
+     * Close database connection and destroy SSql instance.
+     */
     public function close() {
         $this->con->close();
         self::$instance = null;
     }
     
     /**
-     * create instance of myself and load config file.
-     * 
-     * @param array|string  $config  config file for accessing database.
+     * Create SSqlManager instance.
+     * @return SSqlManager
      */
     public function createSSql() {
         return new SSqlManager($this->con, $this->sqlDir);
     }
 
+    /**
+     * Create SQueryManager instance.
+     * @return SQueryManager
+     */
     public function createSQry() {
         return new SQueryManager($this->con);
     }
 
-
-    private function setConfigFromArray($config) {        
+    private function setConfigFromArray($config) {
         if (!in_array('database', $config) 
                 && !is_array($config['database'])) {
             throw new InvalidArgumentException('The parameter sould include database and it should be an array.');
@@ -94,15 +114,27 @@ class SSql {
 		}
     }
 
-	public function beginTransaction() {
+    /**
+     * Start transaction with current connection.
+     * @return bool true when success otherwise false.
+     */
+    public function beginTransaction() {
 		return $this->con->getConnection()->beginTransaction();
 	}
 
-	public function commit() {
+    /**
+     * Commit the transaction.
+     * @return bool true when success otherwise false
+     */
+    public function commit() {
 		return $this->con->getConnection()->commit();
 	}
 
-	public function rollback() {
+    /**
+     * Rollback the transaction.
+     * @return bool true when success otherwise false
+     */
+    public function rollback() {
 		return $this->con->getConnection()->rollback();
 	}
 }

@@ -21,12 +21,16 @@ use SSql\Sql\Context\CommandContext;
 use SSql\Sql\SqlAnalyzer;
 
 /**
- * Simple Outside Sql Manager.
+ * Simple outside Sql Manager.
  *
  * @author amkt922
  */
 class SSqlManager {
 
+    /**
+     * Hold the database connection
+     * @var mixed The derived class of AbstractDriver
+     */
     private $con = null;
     
 	/**
@@ -37,6 +41,9 @@ class SSqlManager {
   
     /**
      * constructor
+     *
+     * @param mixed $con
+     * @param string $sqlDir
      */
     public function __construct($con, $sqlDir) {
 		$this->con = $con;
@@ -61,7 +68,18 @@ class SSqlManager {
 		return $stmt;
 	}
 
-	public function selectList($sql, $params, $entityName = null) {
+    /**
+     * Fetch data from database with passed outside sql.
+     * <pre>
+     * passed sql is a outside sql file path, SSqlManager parses sql written in it
+     * and replaces them with passed parameter.
+     * </pre>
+     * @param string $sql outside sql file name without extension.
+     * @param array $params parameter that passes outside sql.
+     * @param string|null $entityName result class when want to store it, otherwise return is an array..
+     * @return mixed
+     */
+    public function selectList($sql, $params, $entityName = null) {
 		$context = $this->getCommandContext($sql, $params);
 		$stmt = $this->prepareAndBindVariable($context);
 		$stmt->execute();
@@ -72,7 +90,15 @@ class SSqlManager {
 		}
 	}
 
-	public function selectEntity($sql, $params, $entityName = null) {
+    /**
+     * fetch one result data from database with passed outside sql.
+     * The process is same as selectList, for one result.
+     * @param string $sql outside sql file name without extension.
+     * @param array $params parameter that passes outside sql.
+     * @param string|null $entityName result class when want to store it, otherwise return is an array..
+     * @return mixed
+     */
+    public function selectEntity($sql, $params, $entityName = null) {
 		$context = $this->getCommandContext($sql, $params);
 		$stmt = $this->prepareAndBindVariable($context);
 		$stmt->execute();
@@ -87,7 +113,14 @@ class SSqlManager {
 		return null;
 	}
 
-	public function execute($sql, $params) {
+    /**
+     * execute sql. A sql is from parameter sql and parse and build with params.
+     *
+     * @param string $sql outside sql file name without extension.
+     * @param array $params parameter that passes outside sql.
+     * @return mixed same as PDO::exec
+     */
+    public function execute($sql, $params) {
 		$sql = $this->setupSql($sql, $params);
 		return $this->con->getConnection()->exec($sql);
 	}

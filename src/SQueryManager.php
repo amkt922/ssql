@@ -30,10 +30,14 @@ use \InvalidArgumentException;
  */
 class SQueryManager {
 
+    /**
+     * Hold the database connection
+     * @var mixed The derived class of AbstractDriver
+     */
     private $con = null;
 
 	/**
-	 * the sql that is going to be executed.
+	 * The stack that holds sql statements.
 	 * @var array
 	 */
 	private $sqlStack = array();
@@ -46,26 +50,34 @@ class SQueryManager {
     
     /**
      * constructor
+     * @param mixed $con
      */
     public function __construct($con = null) {
 		$this->con = $con;
 	}
 
-	public function insert() {
+    /**
+     * add INSERT statement
+     * @return $this
+     */
+    public function insert() {
 		array_push($this->sqlStack, 'INSERT');
 		return $this;
 	}
 
-	public function delete() {
+    /**
+     * add DELETE statement
+     * @return $this
+     */
+    public function delete() {
 		array_push($this->sqlStack, 'DELETE');
 		return $this;
 	}
 
 	/**
 	 * add SELECT statement with columns. If $columns is empty, add '*' for column.
-	 * 
-	 * @param array|string $columns selected columns 
-	 * @return \SSql\SQueryManager
+	 * @param array|string $columns selected columns
+	 * @return $this
 	 */
 	public function select($columns) {
 		array_push($this->sqlStack, 'SELECT');
@@ -74,10 +86,9 @@ class SQueryManager {
 	}
 
 	/**
-	 * add SELECT DISTINCT sstatement with columns. If $columns is empty, add '*' for column.
-	 * 
-	 * @param array|string $columns selected columns 
-	 * @return \SSql\SQueryManager
+	 * add SELECT DISTINCT statement with columns. If $columns is empty, add '*' for column.
+	 * @param array|string $columns selected columns
+	 * @return $this
 	 */
 	public function selectDistinct($columns) {
 		array_push($this->sqlStack, 'SELECT DISTINCT');
@@ -98,10 +109,9 @@ class SQueryManager {
 
 	/**
 	 * add INNER JOIN statement with table name and condition for join.
-	 * 
 	 * @param string $table
 	 * @param array $conditions
-	 * @return \SSql\SQueryManager
+	 * @return $this
 	 */
 	public function innerJoin($table, $conditions) {
 		$this->checkJoinFuncParams($table, $conditions);
@@ -112,10 +122,9 @@ class SQueryManager {
 
 	/**
 	 * add LEFT OUTER JOIN statement with table name and condition for join.
-	 * 
 	 * @param string $table
 	 * @param array $conditions
-	 * @return \SSql\SQueryManager
+	 * @return $this
 	 */	
 	public function leftJoin($table, $conditions) {
 		$this->checkJoinFuncParams($table, $conditions);
@@ -143,14 +152,25 @@ class SQueryManager {
 		array_push($this->sqlStack, implode(' AND ', $sql));
 	}
 
-	public function from($table) {
+    /**
+     * add FROM statement with passed table name.
+     * @param $table
+     * @return $this
+     */
+    public function from($table) {
 		$this->checkTableNameParam($table);
 		array_push($this->sqlStack, 'FROM');
 		array_push($this->sqlStack, $table);
 		return $this;
 	}
 
-   	public function into($table, $columns = array()) {
+    /**
+     * add INTO statement with passed table name and column names. If columns is empty, not column names set.
+     * @param $table
+     * @param array $columns
+     * @return $this
+     */
+    public function into($table, $columns = array()) {
 		$this->checkTableNameParam($table);
 		array_push($this->sqlStack, 'INTO');
 		array_push($this->sqlStack, $table);
@@ -166,7 +186,12 @@ class SQueryManager {
 		}
 	}
 
-   	public function values($values) {
+    /**
+     * add VALUES statement with passed values. Values are stored in inputParameteters.
+     * @param array $values
+     * @return $this
+     */
+    public function values($values) {
 		$this->checkValuesParam($values);
 		array_push($this->sqlStack, 'VALUES');
 		foreach ($values as $v) {
@@ -181,14 +206,24 @@ class SQueryManager {
 		return $this;
 	}
 
-	public function update($table) {
+    /**
+     * add UPDATE statement with passed table name.
+     * @param string $table
+     * @return $this
+     */
+    public function update($table) {
 		$this->checkTableNameParam($table);
 		array_push($this->sqlStack, 'UPDATE');
 		array_push($this->sqlStack, $table);
 		return $this;
 	}
 
-	public function set($values) {
+    /**
+     * add SET statement with passed values.
+     * @param array $values
+     * @return $this
+     */
+    public function set($values) {
 		$this->checkValuesParam($values);
 		array_push($this->sqlStack, 'SET');
 		$setValues = array();
@@ -206,7 +241,13 @@ class SQueryManager {
 		}
 	}
 
-	public function where($conditions, $whereClause = true) {
+    /**
+     * add WHERE statement with passed conditions.
+     * @param array $conditions
+     * @param bool $whereClause true when set WHERE statement, false when no WHERE.
+     * @return $this
+     */
+    public function where($conditions, $whereClause = true) {
 		$this->checkConditionsParam($conditions);
 		if ($whereClause) {
 			array_push($this->sqlStack, 'WHERE');
@@ -227,14 +268,24 @@ class SQueryManager {
 		return $this;
 	}
 
-	public function orWhere($conditions) {
+    /**
+     * add OR statement in WHERE with passed conditions.
+     * @param array $conditions
+     * @return $this
+     */
+    public function orWhere($conditions) {
 		$this->checkConditionsParam($conditions);
 		array_push($this->sqlStack, 'OR');
 		$this->where($conditions, false);
 		return $this;
 	}
 
-	public function andWhere($conditions) {
+    /**
+     * add AND statement in WHERE with passed conditions.
+     * @param array $conditions
+     * @return $this
+     */
+    public function andWhere($conditions) {
 		$this->checkConditionsParam($conditions);
 		array_push($this->sqlStack, 'AND');
 		$this->where($conditions, false);
@@ -247,7 +298,13 @@ class SQueryManager {
 				}
 	}
 
-	public function having($conditions, $havingClause = true) {
+    /**
+     * add HAVING statement with passed conditions.
+     * @param array $conditions
+     * @param bool $havingClause
+     * @return $this
+     */
+    public function having($conditions, $havingClause = true) {
 		$this->checkConditionsParam($conditions);
 		if ($havingClause) {
 			array_push($this->sqlStack, 'HAVING');
@@ -261,13 +318,23 @@ class SQueryManager {
 		return $this;
 	}
 
-	public function orHaving($conditions) {
+    /**
+     * add OR statement in HAVING with passed conditions.
+     * @param array $conditions
+     * @return $this
+     */
+    public function orHaving($conditions) {
 		$this->checkConditionsParam($conditions);
 		array_push($this->sqlStack, 'OR');
 		$this->having($conditions, false);
 		return $this;
 	}
 
+    /**
+     * add AND statement in HAVING with passed conditions.
+     * @param array $conditions
+     * @return $this
+     */
 	public function andHaving($conditions) {
 		$this->checkConditionsParam($conditions);
 		array_push($this->sqlStack, 'AND');
@@ -275,7 +342,12 @@ class SQueryManager {
 		return $this;
 	}
 
-	public function orderBy($clauses) {
+    /**
+     * add ORDER BY statement with passed clauses.
+     * @param array $clauses
+     * @return $this
+     */
+    public function orderBy($clauses) {
 		$this->checkClausesParam($clauses);
 		array_push($this->sqlStack, 'ORDER BY');
 		$orders = array();
@@ -286,7 +358,12 @@ class SQueryManager {
 		return $this;
 	}
 
-	public function groupBy($clauses) {
+    /**
+     * add GROUP BY statement with passed clauses.
+     * @param array $clauses
+     * @return $this
+     */
+    public function groupBy($clauses) {
 		$this->checkClausesParam($clauses);
 		array_push($this->sqlStack, 'GROUP BY');
 		array_push($this->sqlStack, implode(',', $clauses));
@@ -300,14 +377,24 @@ class SQueryManager {
 		}
 	}
 
-	public function limit($num) {
+    /**
+     * add LIMIT statement with passed number.
+     * @param int $num
+     * @return $this
+     */
+    public function limit($num) {
 		$this->checkNumParam($num);
 		array_push($this->sqlStack, 'LIMIT');
 		array_push($this->sqlStack, $num);
 		return $this;
 	}
 
-	public function offset($num) {
+    /**
+     * add OFFSET statement with passed number.
+     * @param int $num
+     * @return $this
+     */
+    public function offset($num) {
 		$this->checkNumParam($num);
 		array_push($this->sqlStack, 'OFFSET');
 		array_push($this->sqlStack, $num);
@@ -320,12 +407,20 @@ class SQueryManager {
 		}
 	}
 
-	
-	public function getSql() {
+    /**
+     * get the sql built in previous process.
+     * @return string
+     */
+    public function getSql() {
 		return implode(' ', $this->sqlStack);
 	}
 
-	public function execute($entityName = null) {
+    /**
+     * execute the sql built in previous process.
+     * @param string $entityName Result set class, an array is returned when entityName is null.
+     * @return mixed
+     */
+    public function execute($entityName = null) {
 		$sql = $this->getSql();
 		$stmt = $this->con->getConnection()->prepare($sql);
 		if (mb_strpos($sql, 'SELECT') === 0) {
@@ -340,10 +435,18 @@ class SQueryManager {
 		}
 	}
 
+    /**
+     * get table list in the database.
+     * @return array
+     */
     public function tables() {
         return $this->con->tables();
     }
 
+     /**
+     * get column list in the passed table name.
+     * @return array
+     */
     public function columnsOf($table) {
         return $this->con->columnsOf($table);
     }
