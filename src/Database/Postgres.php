@@ -72,6 +72,7 @@ FROM
 WHERE
   table_schema = ?
   AND table_name = ?
+ORDER BY name asc
 SQL;
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(array($table, $schema, $table));
