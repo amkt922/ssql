@@ -1,4 +1,4 @@
-ssql
+SSql
 ====
 
 [![Build Status](https://travis-ci.org/amkt922/ssql.png)](https://travis-ci.org/amkt922/ssql)
@@ -246,7 +246,7 @@ WHERE
 	AND status = 2
 ```
 
-## Othres
+## Others
 The SSql has beginTransaction, commit, rollback methods itself.
 
 ```php
