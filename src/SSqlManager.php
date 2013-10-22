@@ -122,7 +122,24 @@ class SSqlManager {
      */
     public function execute($sql, $params) {
 		$sql = $this->setupSql($sql, $params);
-		return $this->con->getConnection()->exec($sql);
+		$result = $this->con->getConnection()->exec($sql);
+        $this->executeLog($sql, $result);
+        return $result;
 	}
+
+    private function executeLog($sql, $result) {
+        $resultNum = count($result);
+        $message = <<<MSG
+<<<<<<<<<<start 
+call SSqlManager::execute 
+result num is {$resultNum}
+SQL
+{$sql}
+>>>>>>>>>>end
+
+MSG;
+        $logger = SLog::getLogger();
+        $logger->info($message);
+    }
 }
 

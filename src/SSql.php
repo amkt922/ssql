@@ -23,6 +23,7 @@ use \RuntimeException;
 use SSql\SSqlManager;
 use SSql\SQueryManager;
 use SSql\Database\DriverManager;
+use SSql\Log\SLog;
 
 /**
  * SSql factory class.
@@ -109,9 +110,17 @@ class SSql {
         $database = $config['database'];
 		$this->con = DriverManager::getConnection($database);
 
+        // set directory config for sql files.
 		if (array_key_exists('sqlDir', $config)) {
 			$this->sqlDir = $config['sqlDir'];
 		}
+
+        // set logger
+        $logConfig = array();
+        if (array_key_exists('log', $config)) {
+            $logConfig = $config['log'];
+        }
+        SLog::createLogger($logConfig);
     }
 
     /**

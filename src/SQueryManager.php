@@ -17,8 +17,9 @@
 
 namespace SSql;
 
-use \PDO;
 use \InvalidArgumentException;
+use SSql\Log\SLog;
+
 
 /**
  * Simple Query Manager
@@ -426,14 +427,31 @@ class SQueryManager {
 		if (mb_strpos($sql, 'SELECT') === 0) {
 			$stmt->execute($this->inputParameters);
 			if (!is_null($entityName)) {
-				return $stmt->fetchAll(\PDO::FETCH_CLASS, $entityName);
+				$result = $stmt->fetchAll(\PDO::FETCH_CLASS, $entityName);
 			} else {
-				return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+				$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 			}
 		} else {
-			return $stmt->execute($this->inputParameters);
+			$result = $stmt->execute($this->inputParameters);
 		}
+        $this->executeLog($sql, $result);
+        return $result;
 	}
+
+    private function executeLog($sql, $result) {
+        $resultNum = count($result);
+        $message = <<<MSG
+<<<<<<<<<<start 
+call SQueryManager::execute 
+result num is {$resultNum}
+SQL
+{$sql}
+>>>>>>>>>>end
+
+MSG;
+        $logger = SLog::getLogger();
+        $logger->info($message);
+    }
 
     /**
      * get table list in the database.
