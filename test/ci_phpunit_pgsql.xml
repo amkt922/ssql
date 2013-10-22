@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
+  bootstrap="bootstrap.php"
   colors="true">
   <php>
 	  <const name="PGSQL_DSN" value="pgsql:host=localhost;dbname=ssql_test"/>

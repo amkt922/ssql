@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
+  bootstrap="bootstrap.php"
   colors="true">
   <php>
 	  <const name="SQLITE_DSN" value="sqlite:ssql_test.sqlite3"/>
