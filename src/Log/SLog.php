@@ -17,6 +17,7 @@
 
 namespace SSql\Log;
 
+use SSql\Exception\LoggerNotInitializedYet;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -49,12 +50,12 @@ class SLog {
     public static function createLogger(array $config = array()) {
         if (self::$logger === null) {
             if (empty($config)) {
-                $logFileName = sprintf(self::LOG_FILE_NAME, date('YYYYmmdd'));
+                $logFileName = sprintf(self::LOG_FILE_NAME, date('Ymd'));
                 self::$logger = new Logger(self::LOGGER_NAME);
                 self::$logger->pushHandler(new StreamHandler(self::LOG_DIR.$logFileName, Logger::DEBUG));
             } else {
                 $logFileName = explode('.', $config['file']);
-                $logFileName = $logFileName[0] . '_' .  date('YYYYmmdd') . '.'. $logFileName[1];
+                $logFileName = $logFileName[0] . '_' .  date('Ymd') . '.'. $logFileName[1];
                 self::$logger = new Logger($config['name']);
                 self::$logger->pushHandler(new StreamHandler($config['dir'] . $logFileName
                                                 , self::toMonologLevel($config['level'])));
@@ -62,20 +63,29 @@ class SLog {
         }
     }
 
-    public static function getLogger() {
-        return self::$logger;
+    public static function destoryLogger() {
+        self::$logger = null;
     }
 
-    public function info($message = '') {
+    public static function info($message = '') {
+        self::checkLoggerInitialized();
         self::$logger->info($message);
     }
 
-    public function error($message = '') {
+    public static function error($message = '') {
+        self::checkLoggerInitialized();
         self::$logger->error($message);
     }
 
-    public function debug($message = '') {
+    public static function debug($message = '') {
+        self::checkLoggerInitialized();
         self::$logger->debug($message);
+    }
+
+    private static function checkLoggerInitialized() {
+        if (self::$logger === null) {
+           throw new LoggerNotInitializedYet();
+        }
     }
 
     private static function toMonologLevel($level) {

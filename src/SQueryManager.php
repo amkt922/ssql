@@ -449,8 +449,7 @@ SQL
 >>>>>>>>>>end
 
 MSG;
-        $logger = SLog::getLogger();
-        $logger->info($message);
+        SLog::info($message);
     }
 
     /**
