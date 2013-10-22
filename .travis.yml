@@ -10,6 +10,7 @@ env:
   - DB=pgsql
 
 before_script:
+  - composer install
   - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS ssql_test;" -U postgres; fi
   - if [[ "$DB" == "pgsql" ]]; then psql -c "create database ssql_test;" -U postgres; fi
   - if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS ssql_test;" -uroot; fi
