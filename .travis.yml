@@ -10,7 +10,7 @@ env:
   - DB=pgsql
 
 before_script:
-  - php /home/travis/.phpenv/versions/5.3.26/bin/composer.phar self-update
+  - composer self-update
   - composer install
   - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS ssql_test;" -U postgres; fi
   - if [[ "$DB" == "pgsql" ]]; then psql -c "create database ssql_test;" -U postgres; fi
