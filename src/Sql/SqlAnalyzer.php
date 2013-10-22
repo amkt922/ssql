@@ -274,7 +274,7 @@ class SqlAnalyzer {
 
 	protected function parseCommentVariable() {
 		$token = $this->tokenizer->getToken();
-		$testValue = $this->tokenizer->skipToken();
+		$testValue = $this->tokenizer->skipToken(true);
 		if (mb_strpos($token, "@") !== false) {
 			$this->peekNodeStack()->addChild(new Node\EmbeddedVariableNode($token, $testValue));
 		} else {

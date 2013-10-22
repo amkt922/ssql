@@ -56,7 +56,7 @@ class SqlTokenizer {
 			$this->parseElse();
 			break;
 		case self::BIND_VARIABLE:
-			//parseBindVariable();
+			//$this->parseBindVariable();
 			break;
 		default:
 			parseEof();
@@ -142,9 +142,12 @@ class SqlTokenizer {
 		$this->nextTokenType = self::EOF;
 	}
 
-	public function skipToken() {
-		// todo extract date
+	public function skipToken($testValue = false) {
 		$sqlArray = str_split($this->sql);
+        $dateLiteralPrefix = $this->extractDateLiteralPrefix($testValue, $this->sql, $this->position);
+        if ($dateLiteralPrefix !== null) {
+            $this->position = $this->position + mb_strlen($dateLiteralPrefix);
+        }
 		$firstChar = $sqlArray[$this->position];
 		$quote = $firstChar === '(' ? ')' : $firstChar;
 		$quoting = $quote === '\'' || $quote == ')';
@@ -168,7 +171,6 @@ class SqlTokenizer {
 				$index = $i + 1;
 				break;
 			}
-
 		}
 		$this->token = mb_substr($this->sql, $this->position, $index - $this->position);
 		$this->tokenType = self::SQL;
@@ -219,6 +221,39 @@ class SqlTokenizer {
 	public function getAfter() {
 		return mb_substr($this->sql, $this->position);
 	}
+
+    protected function extractDateLiteralPrefix($testValue, $currentSql, $position) {
+        if (!$testValue) {
+            return null;
+        }
+        if ($position >= mb_strlen($currentSql)) {
+            return null;
+        }
+        $firstChar = mb_substr($currentSql, $position, 1);
+        if ($firstChar !== 'd' && $firstChar !== 'D' 
+                && $firstChar !== 't' && $firstChar !== 'T') {
+            return null;
+        }
+        $tmpRear = mb_substr($currentSql, $position);
+        $maxlength = mb_strlen("timestamp '");
+        if (mb_strlen($tmpRear) > $maxlength) {
+            $rear = mb_substr($tmpRear, 0, $maxlength);
+        } else {
+            $rear = $tmpRear;
+        }
+        $lowerRear = strtolower($rear); 
+        $literalPrefix = null;
+        if (mb_strpos($lowerRear, "date '") === 0) {
+            $literalPrefix = mb_substr($rear, 0, mb_strlen("date "));
+        } else if (mb_strpos($lowerRear, "date'") === 0) {
+            $literalPrefix = mb_substr($rear, 0, mb_strlen("date"));
+        } else if (mb_strpos($lowerRear, "timestamp '") === 0) {
+            $literalPrefix = mb_substr($rear, 0, mb_strlen("timestamp "));
+        } else if (mb_strpos($lowerRear, "timestamp'") === 0) {
+            $literalPrefix = mb_substr($rear, 0, mb_strlen("timestamp"));
+        }
+        return $literalPrefix;
+    }
 
 }
 

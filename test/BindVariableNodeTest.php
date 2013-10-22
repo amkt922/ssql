@@ -34,10 +34,9 @@ class BindVariableNodeTest extends \PHPUnit_Framework_TestCase {
 		$param = array('a' => 4999);
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
-		echo $testSql = $context->getSql();
+		$testSql = $context->getSql();
 		$this->assertSame('a = ?', $testSql);	
 		$bindVariables = $context->getBindVariables();
-		print_r($bindVariables);
 		$this->assertSame(4999, $bindVariables[0]);	
    }
 
@@ -48,10 +47,9 @@ class BindVariableNodeTest extends \PHPUnit_Framework_TestCase {
 		$param = array('a' => 'hoge');
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
-		echo $testSql = $context->getSql();
+		$testSql = $context->getSql();
 		$this->assertSame('a = ?', $testSql);	
 		$bindVariables = $context->getBindVariables();
-		print_r($bindVariables);
 		$this->assertSame('hoge', $bindVariables[0]);	
    }
 
@@ -62,10 +60,9 @@ class BindVariableNodeTest extends \PHPUnit_Framework_TestCase {
 		$param = array('a' => array(4999, 5000));
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
-		echo $testSql = $context->getSql();
+		$testSql = $context->getSql();
 		$this->assertSame('a in (?,?)', $testSql);	
 		$bindVariables = $context->getBindVariables();
-		print_r($bindVariables);
 		$this->assertSame(4999, $bindVariables[0]);	
 		$this->assertSame(5000, $bindVariables[1]);	
    }
@@ -77,10 +74,9 @@ class BindVariableNodeTest extends \PHPUnit_Framework_TestCase {
 		$param = array('a' => array('hoge', 'foo'));
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
-		echo $testSql = $context->getSql();
+		$testSql = $context->getSql();
 		$this->assertSame('a in (?,?)', $testSql);	
 		$bindVariables = $context->getBindVariables();
-		print_r($bindVariables);
 		$this->assertSame('hoge', $bindVariables[0]);	
 		$this->assertSame('foo', $bindVariables[1]);	
    }
@@ -94,14 +90,66 @@ class BindVariableNodeTest extends \PHPUnit_Framework_TestCase {
 						, 'b' => 1000);
 		$context = Context\CommandContext::createCommandContext($param);
 		$node->acceptContext($context);
-		echo $testSql = $context->getSql();
+		$testSql = $context->getSql();
 		$this->assertSame('a in (?,?) and b = ?', $testSql);	
 		$bindVariables = $context->getBindVariables();
-		print_r($bindVariables);
 		$this->assertSame('hoge', $bindVariables[0]);	
 		$this->assertSame('foo', $bindVariables[1]);	
 		$this->assertSame(1000, $bindVariables[2]);	
    }
+
+   public function test6() {
+		$sql = "and BIRTHDATE = /*pmb.birthdate*/date '2010-06-06'";
+		$an = new SqlAnalyzer($sql);
+		$node = $an->analyze();
+		$param = array('birthdate' => '2013-10-10');
+		$context = Context\CommandContext::createCommandContext($param);
+		$node->acceptContext($context);
+		$testSql = $context->getSql();
+		$this->assertSame('and BIRTHDATE = ?', $testSql);	
+		$bindVariables = $context->getBindVariables();
+		$this->assertSame('2013-10-10', $bindVariables[0]);	
+   }
+
+   public function test7() {
+		$sql = "and BIRTHDATE = /*pmb.birthdate*/date'2010-06-06'";
+		$an = new SqlAnalyzer($sql);
+		$node = $an->analyze();
+		$param = array('birthdate' => '2013-10-10');
+		$context = Context\CommandContext::createCommandContext($param);
+		$node->acceptContext($context);
+		$testSql = $context->getSql();
+		$this->assertSame('and BIRTHDATE = ?', $testSql);	
+		$bindVariables = $context->getBindVariables();
+		$this->assertSame('2013-10-10', $bindVariables[0]);	
+   }
+
+   public function test8() {
+		$sql = "and BIRTHDATE = /*pmb.birthdate*/timestamp '2010-06-06 00:00:00'";
+		$an = new SqlAnalyzer($sql);
+		$node = $an->analyze();
+		$param = array('birthdate' => '2013-10-10 00:00:00');
+		$context = Context\CommandContext::createCommandContext($param);
+		$node->acceptContext($context);
+		$testSql = $context->getSql();
+		$this->assertSame('and BIRTHDATE = ?', $testSql);	
+		$bindVariables = $context->getBindVariables();
+		$this->assertSame('2013-10-10 00:00:00', $bindVariables[0]);	
+   }
+
+   public function test9() {
+		$sql = "and BIRTHDATE = /*pmb.birthdate*/timestamp'2010-06-06 00:00:00'";
+		$an = new SqlAnalyzer($sql);
+		$node = $an->analyze();
+		$param = array('birthdate' => '2013-10-10 00:00:00');
+		$context = Context\CommandContext::createCommandContext($param);
+		$node->acceptContext($context);
+		$testSql = $context->getSql();
+		$this->assertSame('and BIRTHDATE = ?', $testSql);	
+		$bindVariables = $context->getBindVariables();
+		$this->assertSame('2013-10-10 00:00:00', $bindVariables[0]);	
+   }
+
 
 
 }
