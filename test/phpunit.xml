@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
+  bootstrap="bootstrap.php"
   colors="true">
   <php>
 	  <const name="MYSQL_DSN" value="mysql:host=localhost;dbname=ssql_test"/>
