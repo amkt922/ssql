@@ -37,6 +37,12 @@ class SQueryManager {
      */
     private $con = null;
 
+    /**
+     * config for running
+     * @var array 
+     */
+    private $config = array();
+
 	/**
 	 * The stack that holds sql statements.
 	 * @var array
@@ -52,9 +58,11 @@ class SQueryManager {
     /**
      * constructor
      * @param mixed $con
+     * @param array $config
      */
-    public function __construct($con = null) {
+    public function __construct($con = null, $config = array()) {
 		$this->con = $con;
+        $this->config = $config;
 	}
 
     /**
@@ -296,7 +304,7 @@ class SQueryManager {
 	private function checkConditionsParam($conditions) {
 		if (empty($conditions)) {
 			throw new InvalidArgumentException('parameter conditions should not empty.');
-				}
+		}
 	}
 
     /**
@@ -312,7 +320,7 @@ class SQueryManager {
 		}
 		$sql = array();
 		foreach ($conditions as $column => $value) {
-			array_push($sql, "$column ?");
+            array_push($sql, "{$column} ?");
 			array_push($this->inputParameters, $value);
 		}
 		array_push($this->sqlStack, '(' . implode(' AND ', $sql) . ')');

@@ -46,10 +46,17 @@ class SSql {
     private $sqlDir = '';
 
     /**
+     * runtime config for ssql
+     * @var array 
+     */
+    private $runtimeConfig = array();
+
+    /**
      * Instance of SSql itself
      * @var SSql
      */
     private static $instance = null;
+
   
     /**
      * constructor
@@ -114,6 +121,11 @@ class SSql {
 		if (array_key_exists('sqlDir', $config)) {
 			$this->sqlDir = $config['sqlDir'];
 		}
+        
+        // runtime config
+        if (array_key_exists('runtimeConfig', $config)) {
+            $this->runtimeConfig = $config['runtimeConfig'];
+        }
 
         // set logger
         $logConfig = array();

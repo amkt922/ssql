@@ -32,6 +32,12 @@ class SSqlManager {
      * @var mixed The derived class of AbstractDriver
      */
     private $con = null;
+
+    /**
+     * config for run
+     * @var array
+     */
+    private $config = array();
     
 	/**
 	 * The place to store sql files.
@@ -42,12 +48,14 @@ class SSqlManager {
     /**
      * constructor
      *
-     * @param mixed $con
-     * @param string $sqlDir
+     * @param mixed $con connection
+     * @param string $sqlDir directory path for sql files
+     * @param array $config config for run
      */
-    public function __construct($con, $sqlDir) {
+    public function __construct($con, $sqlDir, $config = array()) {
 		$this->con = $con;
 		$this->sqlDir = $sqlDir;
+        $this->config = $config;
 	}
     
 	private function getCommandContext($sql, $params) {
