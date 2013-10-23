@@ -33,7 +33,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase {
    public function test1() {
         SLog::createLogger();
         SLog::info('log');
-        SLog::destoryLogger();
+        SLog::destroyLogger();
         $today = date('Ymd');
         $logFile = "SSql_{$today}.log";
         if (file_exists($logFile)) {
@@ -54,7 +54,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase {
         $today = date('Ymd');
         SLog::createLogger($logConfig);
         SLog::info('log');
-        SLog::destoryLogger();
+        SLog::destroyLogger();
         $logFile = "../test_{$today}.log";
         if (file_exists($logFile)) {
             $this->assertTrue(true);

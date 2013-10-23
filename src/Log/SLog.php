@@ -63,7 +63,7 @@ class SLog {
         }
     }
 
-    public static function destoryLogger() {
+    public static function destroyLogger() {
         self::$logger = null;
     }
 
