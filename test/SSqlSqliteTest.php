@@ -101,14 +101,33 @@ SQL;
 	}
 
 	/**
-	 * @covers SSql\SSql::from
-	 * @todo   Implement testFrom().
 	 * @group sqlite
 	 */
 	public function test2() {
         $ssql = $this->ssql;
 		$users = $ssql->createSSql()->selectList('selectUser', array('id' => 1));
 		$this->assertSame($users[0]['name'], 'sato');
+	}
+
+	/**
+	 * @group sqlite
+	 */
+	public function test2_1() {
+        $ssql = $this->ssql;
+		$users = $ssql->createSSql()
+                        ->selectEntity('selectUser', array('id' => 100));
+		$this->assertSame($users, null);
+	}
+
+	/**
+	 * @group sqlite
+     * @expectedException SSql\Exception\EntityAlreadyDeletedException
+	 */
+	public function test2_2() {
+        $ssql = $this->ssql;
+		$users = $ssql->createSSql()
+                        ->selectEntityWithDeletedCheck('selectUser', array('id' => 100));
+        $this->assertTrue(false);
 	}
 
 	/**
@@ -148,13 +167,48 @@ SQL;
 
 	/**
 	 * @group sqlite
-	 * 
 	 */
 	public function test6() {
         $ssql = $this->ssql;
 		$users = $ssql->createSQry()->select('*')->from('user')->execute();
 		$this->assertSame($users[0]['id'], '1');
 		$this->assertSame($users[0]['name'], 'sato');
+	}
+
+	/**
+	 * @group sqlite
+	 */
+	public function test6_0() {
+        $ssql = $this->ssql;
+		$users = $ssql->createSQry()->selectEntity('*')->from('user')->execute();
+		$this->assertSame($users['id'], '1');
+		$this->assertSame($users['name'], 'sato');
+	}
+
+	/**
+	 * @group sqlite
+	 */
+	public function test6_1() {
+        $ssql = $this->ssql;
+		$users = $ssql->createSQry()
+                        ->selectEntity('*')
+                        ->from('user')
+                        ->where(array('id = ' => 100)) 
+                        ->execute();
+		$this->assertSame($users, null);
+	}
+
+	/**
+     * @expectedException SSql\Exception\EntityAlreadyDeletedException
+	 * @group sqlite
+	 */
+	public function test6_2() {
+        $ssql = $this->ssql;
+		$users = $ssql->createSQry()
+                        ->selectEntityWithDeletedCheck('*')
+                        ->from('user')
+                        ->where(array('id = ' => 100)) 
+                        ->execute();
 	}
 
 

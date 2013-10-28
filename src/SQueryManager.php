@@ -19,7 +19,7 @@ namespace SSql;
 
 use \InvalidArgumentException;
 use SSql\Log\SLog;
-
+use SSql\Exception\EntityAlreadyDeletedException;
 
 /**
  * Simple Query Manager
@@ -54,7 +54,19 @@ class SQueryManager {
 	 * @var array
 	 */
 	private $inputParameters = array();
-    
+
+    /**
+     * check if entity is deleted or not when execute select statement
+     * @var bool      
+     */
+    private $withDeletedCheck = false;
+
+    /**
+     * return only entity when execute is called
+     * @var bool      
+     */
+    private $selectEntity = false;
+     
     /**
      * constructor
      * @param mixed $con
@@ -91,8 +103,36 @@ class SQueryManager {
 	public function select($columns) {
 		array_push($this->sqlStack, 'SELECT');
 		$this->addColumns($columns);
+        $this->refreshStatus();
 		return $this;
 	}
+
+    /**
+     * return entity when execute is called
+     */
+	public function selectEntity($columns) {
+        $this->select($columns);
+        // these status change should be set after select method
+        // because select method refresh status inside.
+        $this->withDeletedCheck = false;
+        $this->selectEntity = true;
+        return $this;
+    }
+
+
+    /**
+     * call selectEntity method and flag deleted check on.
+     * throw an exception when call execute if result is null
+     * @see select
+     */
+	public function selectEntityWithDeletedCheck($columns) {
+        $this->select($columns);
+        // these status change should be set after select method
+        // because select method refresh status inside.
+        $this->withDeletedCheck = true;
+        $this->selectEntity = true;
+        return $this;
+    }
 
 	/**
 	 * add SELECT DISTINCT statement with columns. If $columns is empty, add '*' for column.
@@ -439,12 +479,29 @@ class SQueryManager {
 			} else {
 				$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 			}
+            if ($this->withDeletedCheck) {
+                if (empty($result)) {
+                    throw new Exception\EntityAlreadyDeletedException;
+                }
+            }
+            if ($this->selectEntity) {
+                if(!empty($result)) {
+                    $result = $result[0];
+                } else {
+                    $result = null;
+                }
+            }
 		} else {
 			$result = $stmt->execute($this->inputParameters);
 		}
         $this->executeLog($sql, $result);
         return $result;
 	}
+
+    private function refreshStatus() {
+        $this->withDeletedCheck = false;
+        $this->selectEntity = false;
+    }
 
     private function executeLog($sql, $result) {
         $resultNum = count($result);

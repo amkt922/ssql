@@ -19,6 +19,7 @@ namespace SSql;
 
 use SSql\Sql\Context\CommandContext;
 use SSql\Sql\SqlAnalyzer;
+use SSql\Exception\EntityAlreadyDeletedException;
 
 /**
  * Simple outside Sql Manager.
@@ -121,6 +122,17 @@ class SSqlManager {
 		return null;
 	}
 
+    /**
+     * throw an exception when the return of selectEntity is null
+     * @see selectEntity
+     */
+    public function selectEntityWithDeletedCheck($sql, $params, $entityName = null) {
+        $result = $this->selectEntity($sql, $params, $entityName);
+        if (is_null($result)) {
+            throw new EntityAlreadyDeletedException;
+        }
+        return $result;
+    }
     /**
      * execute sql. A sql is from parameter sql and parse and build with params.
      *
